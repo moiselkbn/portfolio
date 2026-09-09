@@ -1,0 +1,10 @@
+# Local-dev safety net only. In production the site is served from public/,
+# so config/, includes/ and .env are already outside the web root.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(config|includes)/ - [F,L]
+</IfModule>
+
+<FilesMatch "(^\.|\.(env|sql|dist)$)">
+  Require all denied
+</FilesMatch>

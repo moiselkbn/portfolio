@@ -17,7 +17,7 @@ Hors périmètre : pas de mode sombre.
 - PHP 8.3.40, CSS, JavaScript, SQL
 - Aucun framework front ni back : tout en vanilla
 - Aucun gestionnaire de paquets, aucun bundler
-- CSS en BEM, jetons de design dans `assets/style/style.css` (bloc `:root`)
+- CSS en BEM, jetons de design dans `public/assets/style/style.css` (bloc `:root`)
 - Base de données : MariaDB/MySQL, nom local `portfolio_2026_v3`
 - Accès aux données : PDO direct, requêtes préparées, aucun ORM
 - Environnement local : MAMP, port 8888
@@ -93,7 +93,7 @@ Aucun test dans ce projet.
 - Production : https://moise.techniques-graphiques.be/
 
 ## Interface
-Les jetons vivent dans `assets/style/style.css` (bloc `:root`) — toujours réutiliser ces variables plutôt qu'écrire une valeur en dur.
+Les jetons vivent dans `public/assets/style/style.css` (bloc `:root`) — toujours réutiliser ces variables plutôt qu'écrire une valeur en dur.
 **En cas de divergence entre le CSS et le fichier Figma, Figma fait autorité sur les jetons.**
 **Les noms CSS sont identiques aux noms des variables Figma** (`color/bg` → `--color-bg`, `space/1` → `--space-1`, `radius/base` → `--radius-base`, `ease/default` → `--ease`) — un seul vocabulaire entre les deux outils. Nommage sémantique : un jeton se nomme par son rôle, jamais par sa valeur.
 
@@ -149,6 +149,8 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 - Avancer par petites étapes, pas de livraison en un seul bloc
 - Face à un doute, s'arrêter et demander plutôt que de supposer
 - Expliquer en quelques lignes chaque changement livré
+- Expliquer chaque ligne de code livrée (syntaxe, fonctions natives, choix) — l'auteur est débutant et doit pouvoir défendre chaque ligne
+- Tenir à jour la page Notion « Documentation et apprentissage » : dès qu'une nouvelle notion de code est introduite (fonction native, fonction du projet, fichier, dossier, extension, concept d'architecture, notion SQL ou de sécurité), l'y inscrire dans la bonne catégorie, en français, de façon pédagogique (lisible par un débutant), et compléter la section « Historique des ajouts ». Cette documentation vit **uniquement dans Notion**, jamais en fichiers dans le dépôt.
 - Annoter les `TODO` / `FIXME` laissés dans le code et les récapituler
 - Ne pas créer de nouveau fichier sans demande explicite
 - Ne pas modifier la configuration du projet sans validation
@@ -156,6 +158,7 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 ## Ressources
 - Dépôt : https://github.com/moiselkbn/portfolio
 - Suivi des tâches et documentation : Notion, page « Portfolio 2026 V2 »
+- Apprentissage (chaque notion de code expliquée) : Notion, page « Documentation et apprentissage » — https://app.notion.com/p/3d64ddccb1cc80cab5dfdd47553784ea
 - Maquettes et jetons de design : Figma, fichier « Portfolio 2026 v2 »
 
 ## Terminé signifie

@@ -37,4 +37,11 @@ if ($view === null) {
     $view = '404';
 }
 
+// Render the view into a string (it sets $title and prints its own HTML),
+// then wrap that string in the shared layout.
+$title = 'Portfolio';
+ob_start();
 require dirname(__DIR__) . "/includes/views/{$view}.php";
+$content = ob_get_clean();
+
+require dirname(__DIR__) . '/includes/layout.php';

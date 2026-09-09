@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+/* Fonts are loaded with <link> in components/Head.php, not @import here:
+   @import blocks rendering until the CSS itself has downloaded. */
 
 /* ==========================================================================
    Design tokens
@@ -66,11 +67,10 @@ video {
    Base
    ========================================================================== */
 
-html {
-  lang: en;
-}
-
 body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -110,4 +110,79 @@ h1 {
 :active {
   transform: scale(0.97);
   transition: none;
+}
+
+/* ==========================================================================
+   Layout — shared shell (components/Head, Nav, Footer via includes/layout.php)
+   Structural only; component visual states come later, from Figma.
+   ========================================================================== */
+
+.layout__main {
+  /* Grows to push the footer down; body is a flex column. */
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-3);
+}
+
+/* Navbar --------------------------------------------------------------- */
+
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-3);
+}
+
+.navbar__home {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar__list {
+  display: flex;
+  gap: var(--space-3);
+  list-style: none;
+}
+
+.navbar__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.navbar__link:hover {
+  text-decoration: underline;
+}
+
+.navbar__status {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--color-neutral);
+}
+
+/* Footer -------------------------------------------------------------- */
+
+.footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-3);
+  font-size: 12px;
+  color: var(--color-neutral);
+}
+
+.footer__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  list-style: none;
+}
+
+.footer__link {
+  color: inherit;
 }

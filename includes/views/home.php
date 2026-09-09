@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portfolio</title>
-  <link rel="stylesheet" href="<?= e(url('assets/style/style.css')) ?>">
-</head>
-<body>
-  <h1>Home</h1>
-</body>
-</html>
+<?php
+
+declare(strict_types=1);
+
+/** Home. Wrapped by includes/layout.php. */
+$title = 'Moïse Lukebanu — Portfolio';
+?>
+
+<h1>Home</h1>

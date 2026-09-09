@@ -150,7 +150,7 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 - Face à un doute, s'arrêter et demander plutôt que de supposer
 - Expliquer en quelques lignes chaque changement livré
 - Expliquer chaque ligne de code livrée (syntaxe, fonctions natives, choix) — l'auteur est débutant et doit pouvoir défendre chaque ligne
-- Tenir à jour la page Notion « Documentation et apprentissage » : dès qu'une nouvelle notion de code est introduite (fonction native, fonction du projet, fichier, dossier, extension, concept d'architecture, notion SQL ou de sécurité), l'y inscrire dans la bonne catégorie, en français, de façon pédagogique (lisible par un débutant), et compléter la section « Historique des ajouts ». Cette documentation vit **uniquement dans Notion**, jamais en fichiers dans le dépôt.
+- Tenir à jour la page Notion « Apprentissage — développement web » : dès qu'une nouvelle notion de code est introduite (fonction native, fonction du projet, fichier, dossier, extension, concept d'architecture, notion SQL ou de sécurité), l'y inscrire — Partie 1 si c'est réutilisable sur tout projet, Partie 2 (section « Portfolio 2026 ») si c'est spécifique —, en français, de façon pédagogique (lisible par un débutant), et compléter la section « Historique des ajouts ». Cette documentation vit **uniquement dans Notion**, jamais en fichiers dans le dépôt.
 - Annoter les `TODO` / `FIXME` laissés dans le code et les récapituler
 - Ne pas créer de nouveau fichier sans demande explicite
 - Ne pas modifier la configuration du projet sans validation
@@ -158,7 +158,7 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 ## Ressources
 - Dépôt : https://github.com/moiselkbn/portfolio
 - Suivi des tâches et documentation : Notion, page « Portfolio 2026 V2 »
-- Apprentissage (chaque notion de code expliquée) : Notion, page « Documentation et apprentissage » — https://app.notion.com/p/3d64ddccb1cc80cab5dfdd47553784ea
+- Apprentissage (chaque notion de code expliquée, générale + spécifique projet) : Notion, page « Apprentissage — développement web » — https://app.notion.com/p/3d64ddccb1cc80cab5dfdd47553784ea
 - Maquettes et jetons de design : Figma, fichier « Portfolio 2026 v2 »
 
 ## Terminé signifie

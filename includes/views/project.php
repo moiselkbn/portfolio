@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-/** Project page. $slug is set by the router. Wrapped by includes/layout.php. */
-$title = 'Project — Moïse Lukebanu';
+/**
+ * Project page. $project is the row loaded by index.php
+ * (findFeaturedProjectBySlug); index.php has already 404'd if it was null.
+ * Wrapped by includes/layout.php.
+ */
+$title = $project['title'] . ' — Moïse Lukebanu';
 ?>
 
-<h1>Project</h1>
-<p>slug: <?= e($slug) ?></p>
+<h1><?= e($project['title']) ?></h1>
+<p><?= e($project['year']) ?></p>

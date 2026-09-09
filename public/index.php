@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/helpers.php';
+require_once dirname(__DIR__) . '/includes/projects.php';
 
 /**
  * Front controller. Every request that is not a real file or directory is
@@ -35,6 +36,16 @@ if ($view === null && preg_match('#^/projects/([a-z0-9-]+)$#', $path, $matches) 
 if ($view === null) {
     http_response_code(404);
     $view = '404';
+}
+
+// The project page only exists for a real project; anything else is a 404.
+$project = null;
+if ($view === 'project') {
+    $project = findFeaturedProjectBySlug($slug);
+    if ($project === null) {
+        http_response_code(404);
+        $view = '404';
+    }
 }
 
 // Render the view into a string (it sets $title and prints its own HTML),

@@ -1,19 +1,23 @@
+# Secrets & environment
 .env
 .env.*
 !.env.example
 
-/vendor/
-
-node_modules/
-
-
-*.log
-
+# OS
 .DS_Store
 Thumbs.db
+
+# Editors / IDE
 .vscode/
 .idea/
-
+*.swp
 *.tmp
 *.cache
-```
+
+# Logs
+*.log
+/logs/
+
+# Dependencies (unused — vanilla project, kept as a safety net)
+/vendor/
+/node_modules/

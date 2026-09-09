@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* ==========================================================================
+   Design tokens
+   CSS names mirror the Figma variable names one-to-one (color/bg -> --color-bg,
+   space/1 -> --space-1). Never hard-code a value that exists here.
+   ========================================================================== */
+
+:root {
+  /* Colors — strictly neutral palette. Error and success are the only colors,
+     functional use only (never decorative). */
+  --color-bg: #fafafa;
+  --color-text: #1a1a1a;
+  --color-neutral-light: #d9d9d9;
+  --color-neutral: #c4c4c4;
+  --color-error: #e22d00;
+  --color-success: #427536;
+
+  /* Spacing — base 8 */
+  --space-0-5: 4px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 64px;
+
+  /* Radii */
+  --radius-none: 0;
+  --radius-sm: 3px;
+  --radius-base: 6px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  /* Motion */
+  --ease: cubic-bezier(0, 0, 0.23, 1);
+  --duration: 200ms;
+
+  /* Type families — Instrument Serif for headings (single weight, hierarchy by
+     size), Inter Tight for body. Loaded via <link> in the page <head>. */
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-body: "Inter Tight", system-ui, -apple-system, Arial, sans-serif;
+}
+
+/* ==========================================================================
+   Minimal reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+img,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  lang: en;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  /* 120% everywhere; H1 overrides to 100% below. */
+  line-height: 1.2;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  /* -4% tracking on every heading. */
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+h1 {
+  line-height: 1;
+}
+
+/* ==========================================================================
+   Interaction states
+   ========================================================================== */
+
+/* Focus reuses --color-text on purpose — there is deliberately no --color-focus.
+   Never remove this outline. */
+:focus-visible {
+  outline: 3px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* Soft hover, inverted :active with a scale drop and no transition. */
+:active {
+  transform: scale(0.97);
+  transition: none;
+}

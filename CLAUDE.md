@@ -40,7 +40,7 @@ Déploiement : envoi manuel par FTP (FileZilla) vers O2Switch.
 ## Routes
 - 5 routes publiques : `/` · `/projects/{slug}` · `/about` · `/lab` · `/404`
 - Contact : pas de route dédiée — ancre `#contact`, le formulaire vit dans le `<footer>`
-- Routes admin (`/admin/*`) : encore à déterminer, demander avant d'en créer une
+- Routes admin (gérées par le même `public/index.php`, gabarit `layout-admin.php`) : `/admin` (tableau de bord, protégé) · `/admin/login` (GET formulaire, POST connexion) · `/admin/logout` (POST uniquement). Les suivantes (`/admin/projects…`) restent à créer — demander avant d'en ajouter une
 
 ## Conventions
 - Formatage : Prettier

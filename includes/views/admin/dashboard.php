@@ -14,5 +14,6 @@ $title = 'Admin';
 <p>Signed in as <?= e($admin['username']) ?>.</p>
 
 <form method="post" action="<?= e(url('admin/logout')) ?>">
+  <?= csrfField() ?>
   <button class="button" type="submit">Sign out</button>
 </form>

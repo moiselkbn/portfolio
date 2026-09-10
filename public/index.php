@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/helpers.php';
 require_once dirname(__DIR__) . '/includes/projects.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
+require_once dirname(__DIR__) . '/includes/csrf.php';
 
 /**
  * Front controller. Every request that is not a real file or directory is
@@ -21,6 +22,7 @@ $path = '/' . trim(substr($uri, strlen(BASE_PATH)), '/');
 // Sign out is an action, not a page — POST only, then back to the login page.
 if ($path === '/admin/logout' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     startSession();
+    checkCsrf();
     logout();
     header('Location: ' . url('admin/login'));
     exit;
@@ -55,7 +57,7 @@ if (str_starts_with($view, 'admin/')) {
     startSession();
 
     if ($view === 'admin/login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        // TODO(step B): verify the CSRF token before trusting this POST.
+        checkCsrf();
         $ok = attemptLogin(
             (string) ($_POST['username'] ?? ''),
             (string) ($_POST['password'] ?? '')

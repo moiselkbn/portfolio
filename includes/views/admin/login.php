@@ -16,6 +16,8 @@ $title = 'Sign in — Admin';
 <?php endif; ?>
 
 <form class="form" method="post" action="<?= e(url('admin/login')) ?>">
+  <?= csrfField() ?>
+
   <p class="form__row">
     <label class="form__label" for="username">Username</label>
     <input class="form__input" type="text" id="username" name="username"

@@ -48,6 +48,13 @@ if ($view === null && preg_match('#^/projects/([a-z0-9-]+)$#', $path, $matches) 
     $slug = $matches[1];
 }
 
+// Dynamic route: /admin/projects/{id}/edit
+$editId = null;
+if ($view === null && preg_match('#^/admin/projects/(\d+)/edit$#', $path, $matches) === 1) {
+    $view = 'admin/project-form';
+    $editId = (int) $matches[1];
+}
+
 if ($view === null) {
     http_response_code(404);
     $view = '404';
@@ -82,20 +89,37 @@ if (str_starts_with($view, 'admin/')) {
         exit;
     }
 
-    // Create a project.
+    // Create / edit a project (same form).
     if ($view === 'admin/project-form') {
-        $isEdit = false;
+        $isEdit = $editId !== null;
         $errors = [];
-        $form = emptyProjectForm();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($isEdit) {
+            $project = findProjectById($editId);
+            if ($project === null) {
+                http_response_code(404);
+                $view = '404';
+            } else {
+                $form = projectFormFromRow($project);
+            }
+        } else {
+            $form = emptyProjectForm();
+        }
+
+        if ($view === 'admin/project-form' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             checkCsrf();
             $form = projectDataFromPost();
-            $errors = validateProject($form);
+            $errors = validateProject($form, $editId);
             if (!$errors) {
-                $id = createProject($form);
-                flash('Project created.');
-                header('Location: ' . url("admin/projects/{$id}/edit"));
+                if ($isEdit) {
+                    updateProject($editId, $form);
+                    flash('Project saved.');
+                    header('Location: ' . url("admin/projects/{$editId}/edit"));
+                } else {
+                    $editId = createProject($form);
+                    flash('Project created.');
+                    header('Location: ' . url("admin/projects/{$editId}/edit"));
+                }
                 exit;
             }
         }

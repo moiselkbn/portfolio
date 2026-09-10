@@ -92,6 +92,29 @@ function emptyProjectForm(): array
 }
 
 /**
+ * Turn a DB row (from findProjectById) into the form shape, decoding the JSON
+ * columns back to arrays.
+ *
+ * @param array<string, mixed> $row
+ * @return array<string, mixed>
+ */
+function projectFormFromRow(array $row): array
+{
+    return [
+        'title'          => (string) $row['title'],
+        'year'           => (string) $row['year'],
+        'status'         => (string) $row['status'],
+        'context'        => (string) ($row['context'] ?? ''),
+        'role'           => (string) ($row['role'] ?? ''),
+        'result'         => (string) ($row['result'] ?? ''),
+        'decisions'      => $row['decisions'] ? json_decode((string) $row['decisions'], true) : [],
+        'annex_stack'    => $row['annex_stack'] ? json_decode((string) $row['annex_stack'], true) : [],
+        'annex_repo_url' => (string) ($row['annex_repo_url'] ?? ''),
+        'annex_retro'    => (string) ($row['annex_retro'] ?? ''),
+    ];
+}
+
+/**
  * Turn the raw $_POST of the project form into the clean shape above:
  * empty decision slots dropped, annex_stack split on commas.
  *

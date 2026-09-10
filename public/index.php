@@ -10,6 +10,10 @@ require_once dirname(__DIR__) . '/includes/errors.php';
 
 registerErrorHandlers();
 
+// The contact form lives in the footer on every page, so its CSRF token needs
+// a session everywhere — not only under /admin.
+startSession();
+
 // Buffer the whole response so a mid-render exception can be turned into a
 // clean 500 (the handler discards the partial output). Flushed at script end.
 ob_start();

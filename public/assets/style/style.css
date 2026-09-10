@@ -95,6 +95,13 @@ h1 {
   line-height: 1;
 }
 
+/* Type scale — desktop / mobile pairs interpolated with clamp() rather than a
+   breakpoint jump (CLAUDE.md). 64/40 · 45/32 · 32/25 · 23/20. */
+h1 { font-size: clamp(2.5rem, 5vw + 1rem, 4rem); }
+h2 { font-size: clamp(2rem, 3vw + 1rem, 2.8125rem); }
+h3 { font-size: clamp(1.5625rem, 2vw + 0.75rem, 2rem); }
+h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
+
 /* ==========================================================================
    Interaction states
    ========================================================================== */
@@ -181,22 +188,116 @@ h1 {
 /* Footer -------------------------------------------------------------- */
 
 .footer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-3);
-  font-size: 12px;
-  color: var(--color-neutral);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 100vh;
+  padding: var(--space-5) var(--space-3);
+  background-color: var(--color-bg);
 }
 
-.footer__list {
+/* The signature. Decorative, sized to the viewport, with the one allowed halo. */
+.footer__wordmark {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 15vw, 16rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--color-text);
+  text-shadow:
+    0 0 0.06em var(--color-neutral-light),
+    0 0 0.28em var(--color-neutral-light);
+  overflow-wrap: anywhere;
+}
+
+.footer__inner {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-top: auto; /* push everything to the bottom, wordmark stays up top */
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.footer__buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
   list-style: none;
 }
 
-.footer__link {
-  color: inherit;
+.footer__copyright,
+.footer__location {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Contact form ------------------------------------------------------- */
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+  width: min(477px, 100%);
+}
+
+.contact__title {
+  align-self: stretch;
+}
+
+.contact__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.contact__row {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.contact__row .field {
+  flex: 1;
+}
+
+/* Field (design-system component) ----------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin: 0;
+}
+
+.field__label {
+  font-size: 14px;
+}
+
+.field__required {
+  color: var(--color-error);
+}
+
+.field__input {
+  padding: var(--space-1) var(--space-2);
+  font: inherit;
+  color: var(--color-text);
+  background-color: var(--color-neutral-light);
+  border: 0;
+  border-radius: var(--radius-base);
+}
+
+.field__input--message {
+  min-height: 103px;
+  resize: vertical;
 }
 
 /* ==========================================================================
@@ -301,17 +402,63 @@ h1 {
   border-radius: var(--radius-base);
 }
 
+/* Button (design-system component — Figma "Button") ---------------- */
+
 .button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   align-self: start;
-  padding: var(--space-1) var(--space-3);
-  font: inherit;
-  color: var(--color-bg);
-  background-color: var(--color-text);
+  padding: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 20px;
+  color: var(--color-text);
+  background-color: var(--color-neutral-light);
   border: 0;
   border-radius: var(--radius-base);
+  text-decoration: none;
   cursor: pointer;
 }
 
+.button:hover {
+  background-color: var(--color-neutral);
+}
+
+/* :active inverted + scale, no transition (CLAUDE.md). */
+.button:active {
+  color: var(--color-bg);
+  background-color: var(--color-text);
+  transform: scale(0.97);
+  transition: none;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .button--danger {
+  color: var(--color-bg);
   background-color: var(--color-error);
+}
+
+.button--danger:hover {
+  background-color: var(--color-error);
+  opacity: 0.9;
+}
+
+.button__icon {
+  flex-shrink: 0;
+}
+
+/* External-link arrow: the Figma SVG, tinted to currentColor so it follows
+   the button's :active inversion. */
+.button__arrow {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  background-color: currentColor;
+  -webkit-mask: url('../icons/arrow-external.svg') no-repeat center / 24px;
+  mask: url('../icons/arrow-external.svg') no-repeat center / 24px;
 }

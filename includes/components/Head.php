@@ -19,4 +19,7 @@ declare(strict_types=1);
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap">
 
   <link rel="stylesheet" href="<?= e(url('assets/style/style.css')) ?>">
+
+  <!-- type="module" is deferred by default: runs after the DOM is parsed. -->
+  <script type="module" src="<?= e(url('assets/js/clock.js')) ?>"></script>
 </head>

@@ -3,15 +3,49 @@
 declare(strict_types=1);
 
 /**
- * Site footer, identical on every page. The contact form itself lives inside
- * this footer on the home page only (added in a later step).
+ * Site footer — identical on every page. Full viewport height (Figma).
+ * The giant "Moïse Lukebanu" wordmark is the site's signature: decorative,
+ * not a link. The contact form is included on every page.
  */
 ?>
 <footer class="footer" id="contact">
-  <ul class="footer__list">
-    <li>© <?= date('Y') ?> Moïse Lukebanu</li>
-    <li><a class="footer__link" href="<?= e(url('cv/moise-lukebanu-cv.pdf')) ?>">CV</a></li>
-    <li><a class="footer__link" href="https://github.com/moiselkbn" rel="me">GitHub</a></li>
-    <li><a class="footer__link" href="https://www.linkedin.com/in/moiselukebanu/" rel="me">LinkedIn</a></li>
-  </ul>
+  <p class="footer__wordmark" aria-hidden="true">Moïse Lukebanu</p>
+
+  <div class="footer__inner">
+    <div class="footer__links">
+      <ul class="footer__buttons">
+        <li>
+          <a class="button button--external" href="https://github.com/moiselkbn">
+            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
+                 alt="" width="24" height="24">
+            <span>GitHub</span>
+            <span class="button__arrow" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li>
+          <a class="button button--external" href="https://www.linkedin.com/in/moiselukebanu/">
+            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
+                 alt="" width="24" height="24">
+            <span>LinkedIn</span>
+            <span class="button__arrow" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li>
+          <a class="button" href="<?= e(url('cv/moise-lukebanu-cv.pdf')) ?>" download>
+            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
+                 alt="" width="24" height="24">
+            <span>Download the resume</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="footer__copyright">Moïse Lukebanu, <?= date('Y') ?></p>
+    </div>
+
+    <p class="footer__location">
+      Brussels, Belgium — <span data-brussels-time>—</span>
+    </p>
+
+    <?php require __DIR__ . '/ContactForm.php'; ?>
+  </div>
 </footer>

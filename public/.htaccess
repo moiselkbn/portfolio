@@ -9,3 +9,21 @@
 
   RewriteRule ^ index.php [L]
 </IfModule>
+
+# Response headers, applied to everything served from here.
+# "always" so they also land on PHP/FastCGI responses, not just static files.
+<IfModule mod_headers.c>
+  # Don't let the browser guess a file's type against its Content-Type.
+  Header always set X-Content-Type-Options "nosniff"
+  # Don't allow the site to be embedded in an <iframe> elsewhere (clickjacking).
+  Header always set X-Frame-Options "DENY"
+  # Send only the origin as referrer to other sites.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Deny dotfiles here too (defensive; there should be none under public/).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

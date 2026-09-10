@@ -1,10 +1,16 @@
-# Local-dev safety net only. In production the site is served from public/,
-# so config/, includes/ and .env are already outside the web root.
+# Local-dev safety net. In production the site is served from public/, so
+# config/, includes/, .env and .git already sit outside the web root — but a
+# misconfigured host would expose them, hence the belt here too.
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^(config|includes)/ - [F,L]
+  # 403 on the private directories, whatever the request underneath them.
+  RewriteRule ^(\.git|\.github|config|includes|logs)(/|$) - [F,L]
 </IfModule>
 
-<FilesMatch "(^\.|\.(env|sql|dist)$)">
+# Dotfiles (.env, .gitignore, .htaccess…) and source-ish extensions.
+<FilesMatch "(^\.|\.(env|sql|md|dist|example|lock|json)$)">
   Require all denied
 </FilesMatch>
+
+Options -Indexes

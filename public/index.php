@@ -6,11 +6,24 @@ require_once dirname(__DIR__) . '/includes/helpers.php';
 require_once dirname(__DIR__) . '/includes/projects.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/csrf.php';
+require_once dirname(__DIR__) . '/includes/errors.php';
+
+registerErrorHandlers();
+
+// Buffer the whole response so a mid-render exception can be turned into a
+// clean 500 (the handler discards the partial output). Flushed at script end.
+ob_start();
 
 /**
  * Front controller. Every request that is not a real file or directory is
  * rewritten here (public/.htaccess) and matched against the routes below.
  */
+
+// Security response headers. Set here (not only in .htaccess) because MAMP's
+// mod_fastcgi drops .htaccess headers on PHP responses.
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
 
 // Path the app is served from: "/PORTFOLIO_2026_V3/public" locally, "" in production.
 define('BASE_PATH', rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/'));

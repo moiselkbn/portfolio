@@ -188,34 +188,45 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
 /* Footer -------------------------------------------------------------- */
 
 .footer {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
   min-height: 100vh;
-  padding: var(--space-5) var(--space-3);
+  padding: var(--space-4); /* 32px all sides (Figma) */
   background-color: var(--color-bg);
 }
 
-/* The signature. Decorative, sized to the viewport, with the one allowed halo. */
+/* The signature. Decorative text that must NOT behave like text: inert, not
+   selectable, default cursor. The "sticker" outline is a thick text-stroke
+   painted behind the fill (paint-order), the one exception to "no shadow". */
 .footer__wordmark {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 15vw, 16rem);
+  /* No upper clamp: the signature always spans the viewport width (~95%).
+     Floor only, so it stays legible on very narrow phones. */
+  font-size: max(3rem, 18vw);
   line-height: 1;
   letter-spacing: -0.04em;
+  white-space: nowrap;
   color: var(--color-text);
-  text-shadow:
-    0 0 0.06em var(--color-neutral-light),
-    0 0 0.28em var(--color-neutral-light);
-  overflow-wrap: anywhere;
+  /* 48px stroke on a 256px glyph in Figma -> 0.1875em, so it scales with size. */
+  -webkit-text-stroke: 0.1875em var(--color-neutral-light);
+  paint-order: stroke fill;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  text-align: center;
 }
 
+/* Links left, form right; the location is taken out of the flow so it centres
+   on the page regardless of what the sides weigh. */
 .footer__inner {
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-5);
+  gap: var(--space-4);
   margin-top: auto; /* push everything to the bottom, wordmark stays up top */
 }
 
@@ -223,6 +234,13 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+.footer__location {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%);
 }
 
 .footer__buttons {
@@ -247,6 +265,7 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
   align-items: flex-end;
   gap: var(--space-3);
   width: min(477px, 100%);
+  justify-self: end;
 }
 
 .contact__title {
@@ -316,6 +335,10 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
   gap: var(--space-3);
   max-width: 420px;
   margin-top: var(--space-3);
+}
+
+.form .button {
+  align-self: flex-start;
 }
 
 .admin-table {
@@ -408,20 +431,32 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  align-self: start;
   padding: var(--space-2);
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: 16px; /* Body/Base — Figma "Button" */
   color: var(--color-text);
   background-color: var(--color-neutral-light);
-  border: 0;
+  border: 3px solid transparent; /* reserve room so :focus doesn't shift layout */
   border-radius: var(--radius-base);
   text-decoration: none;
   cursor: pointer;
+  transition:
+    background-color var(--duration) var(--ease),
+    color var(--duration) var(--ease),
+    border-color var(--duration) var(--ease);
+}
+
+/* External buttons carry the arrow: less right padding (Figma 16 / 10). */
+.button--external {
+  padding-right: 10px;
 }
 
 .button:hover {
   background-color: var(--color-neutral);
+}
+
+.button:focus-visible {
+  border-color: var(--color-text);
 }
 
 /* :active inverted + scale, no transition (CLAUDE.md). */
@@ -433,7 +468,7 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
 }
 
 .button:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 

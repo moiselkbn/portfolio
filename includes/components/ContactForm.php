@@ -50,5 +50,5 @@ declare(strict_types=1);
     </p>
   </div>
 
-  <button class="button" type="submit">Send</button>
+  <button class="button" type="submit">Send message</button>
 </form>

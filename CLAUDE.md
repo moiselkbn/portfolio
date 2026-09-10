@@ -33,14 +33,17 @@ Déploiement : envoi manuel par FTP (FileZilla) vers O2Switch.
 ## Architecture
 - Point d'entrée : `public/index.php`
 - Nouveau composant réutilisable → `includes/components/`
-- `medias/` : médias compressés, un sous-dossier par projet
+- `public/medias/` : médias compressés, un sous-dossier par projet
 - Pas de pattern d'architecture nommé (rangement à l'instinct) : respecter l'existant plutôt que d'en imposer un nouveau
 - Flux de données pas encore figé — demander avant de supposer une structure
 
 ## Routes
 - 5 routes publiques : `/` · `/projects/{slug}` · `/about` · `/lab` · `/404`
-- Contact : pas de route dédiée — ancre `#contact`, le formulaire vit dans le `<footer>`
-- Routes admin (gérées par le même `public/index.php`, gabarit `layout-admin.php`) : `/admin` (tableau de bord, protégé) · `/admin/login` (GET formulaire, POST connexion) · `/admin/logout` (POST uniquement). Les suivantes (`/admin/projects…`) restent à créer — demander avant d'en ajouter une
+- Contact : pas de *page* dédiée — ancre `#contact`, le formulaire vit dans le `<footer>` (sur toutes les pages). Le POST du formulaire sera reçu sur `/contact` (traitement seul, aucune page rendue) — route à implémenter en F3, pas encore branchée
+- Routes admin (gérées par le même `public/index.php`, gabarit `layout-admin.php`), toutes protégées sauf `/admin/login` :
+  `/admin` (tableau de bord) · `/admin/login` (GET formulaire, POST connexion) · `/admin/logout` (POST) ·
+  `/admin/projects` (liste) · `/admin/projects/new` (création) · `/admin/projects/{id}/edit` · `/admin/projects/{id}/delete` (GET confirme, POST supprime).
+  Demander avant d'en ajouter une nouvelle
 
 ## Conventions
 - Formatage : Prettier
@@ -71,6 +74,7 @@ Aucun test dans ce projet.
 
 ## Base de données
 - Moteur : MySQL, base locale `portfolio_2026_v3`
+- Schéma versionné dans `config/schema.sql`, données de départ dans `config/seed.sql` — appliqués à la main (phpMyAdmin), aucun outil de migration
 - Deux tables maximum : aucune table supplémentaire sans besoin réel démontré
 - `project` : id, slug (généré automatiquement depuis le titre), title, year, cover_image, gallery,
   context, role, result, decisions, annex_stack, annex_repo_url, annex_retro, status,
@@ -91,14 +95,15 @@ Aucun test dans ce projet.
 
 ## Configuration
 - Fichier `.env` pour les valeurs d'environnement ; maintenir `.env.example` à jour à chaque nouvelle variable
-- Variables indispensables : `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`
+- Variables : `APP_ENV` (`local` ou `production` — jamais déduit de `HTTP_HOST` ; pilote l'affichage des erreurs), `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`
 - Local : MAMP, port 8888 — projet dans `/Applications/MAMP/htdocs/PORTFOLIO_2026_V3`
 - Production : https://moise.techniques-graphiques.be/
 
 ## Interface
 Les jetons vivent dans `public/assets/style/style.css` (bloc `:root`) — toujours réutiliser ces variables plutôt qu'écrire une valeur en dur.
 **En cas de divergence entre le CSS et le fichier Figma, Figma fait autorité sur les jetons.**
-**Les noms CSS sont identiques aux noms des variables Figma** (`color/bg` → `--color-bg`, `space/1` → `--space-1`, `radius/base` → `--radius-base`, `ease/default` → `--ease`) — un seul vocabulaire entre les deux outils. Nommage sémantique : un jeton se nomme par son rôle, jamais par sa valeur.
+**Les noms CSS sont identiques aux noms des variables Figma** (`color/bg` → `--color-bg`, `space/1` → `--space-1`, `radius/base` → `--radius-base`) — un seul vocabulaire entre les deux outils. Nommage sémantique : un jeton se nomme par son rôle, jamais par sa valeur.
+Exception : `--ease` et `--duration` (mouvement) sont des **jetons locaux** — Figma ne les expose pas comme variables (l'easing y est un réglage de prototype « Custom Ease »).
 
 - Palette strictement neutre, aucune couleur d'accent décorative — erreur et validation sont les seules couleurs, à usage fonctionnel uniquement
 - `--color-bg` #FAFAFA · `--color-text` #1A1A1A · `--color-neutral-light` #D9D9D9 · `--color-neutral` #C4C4C4 · `--color-error` #E22D00 · `--color-success` #427536
@@ -109,7 +114,7 @@ Les jetons vivent dans `public/assets/style/style.css` (bloc `:root`) — toujou
 - Corps : 12 / 14 / 16 / 20, `line-height` 120 % — le 12 est réservé aux méta-informations (légendes du Lab, copyright, statut de recherche) ; les labels de formulaire restent à 14
 - Espacement (base 8) : `--space-0-5` 4 · `--space-1` 8 · `--space-2` 16 · `--space-3` 24 · `--space-4` 32 · `--space-5` 48 · `--space-6` 64
 - Rayons : `--radius-none` 0 · `--radius-sm` 3 · `--radius-base` 6 · `--radius-lg` 12 · `--radius-full` 999
-- Animations : 200 ms avec `--ease` = `cubic-bezier(0, 0, 0.23, 1)`
+- Animations : `--duration` 200 ms · `--ease` `cubic-bezier(0, 0, 0.23, 1)` (jetons locaux, cf. ci-dessus)
 - États : survol doux ; `:active` inversé + `scale(0.97)` sans transition
 - Pas d'ombre portée, pas de dégradé — **exception unique** : le wordmark « Moïse Lukebanu » géant du footer porte un **contour de texte** (`-webkit-text-stroke`, couleur `--color-neutral-light`, épaisseur ~`0.1875em` = 48 px pour 256 px de police dans Figma), peint derrière le remplissage via `paint-order: stroke fill`. C'est un contour, pas une ombre, et c'est le geste signature du site. Aucun autre effet de ce type ailleurs — le « Moïse Lukebanu » de la navbar reste du texte nu.
 - Responsive continu de 320 à 1920 px : breakpoints dictés par le contenu, jamais par un appareil
@@ -136,7 +141,7 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 - Non négociable : contraste 4,5:1 minimum, focus visible sur tout élément interactif, navigation clavier complète, texte alternatif sur toute image porteuse de sens
 - Images : WebP, moins de 300 Ko chacune, compressées manuellement avant upload (aucun script d'optimisation dans ce projet)
 - Vidéos : WebM, sans fallback MP4
-- Budget de poids par page : à trancher — ne pas inventer de chiffre, demander
+- Budget de poids par page : pas de plafond chiffré (tranché le 10 septembre 2026 — impraticable dès qu'une page projet a plusieurs médias). À la place : compresser au maximum avant upload (images < 300 Ko, vidéos WebM), lazy-load des médias lourds, et se fier au score Lighthouse
 - Lighthouse visé : 90+ en performance et en accessibilité
 
 ## À ne jamais faire sans validation

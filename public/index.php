@@ -30,11 +30,12 @@ if ($path === '/admin/logout' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Static routes: exact path => view file name (in includes/views/, without .php).
 $routes = [
-    '/'            => 'home',
-    '/about'       => 'about',
-    '/lab'         => 'lab',
-    '/admin'       => 'admin/dashboard',
-    '/admin/login' => 'admin/login',
+    '/'               => 'home',
+    '/about'          => 'about',
+    '/lab'            => 'lab',
+    '/admin'          => 'admin/dashboard',
+    '/admin/login'    => 'admin/login',
+    '/admin/projects' => 'admin/projects',
 ];
 
 $view = $routes[$path] ?? null;
@@ -51,32 +52,30 @@ if ($view === null) {
     $view = '404';
 }
 
-// Admin section: session, login submission, access guard.
+// Admin section: session, login handling, access guard.
 $loginError = null;
 if (str_starts_with($view, 'admin/')) {
+    require_once dirname(__DIR__) . '/includes/admin/projects.php';
     startSession();
 
-    if ($view === 'admin/login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        checkCsrf();
-        $ok = attemptLogin(
-            (string) ($_POST['username'] ?? ''),
-            (string) ($_POST['password'] ?? '')
-        );
-        if ($ok) {
+    if ($view === 'admin/login') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            checkCsrf();
+            if (attemptLogin(
+                (string) ($_POST['username'] ?? ''),
+                (string) ($_POST['password'] ?? '')
+            )) {
+                header('Location: ' . url('admin'));
+                exit;
+            }
+            http_response_code(401);
+            $loginError = 'Identifiants incorrects.';
+        } elseif (currentAdmin() !== null) {
             header('Location: ' . url('admin'));
             exit;
         }
-        http_response_code(401);
-        $loginError = 'Identifiants incorrects.';
-    }
-
-    // Already signed in? Skip the login page.
-    if ($view === 'admin/login' && currentAdmin() !== null) {
-        header('Location: ' . url('admin'));
-        exit;
-    }
-    // Not signed in? The dashboard is off limits.
-    if ($view === 'admin/dashboard' && currentAdmin() === null) {
+    } elseif (currentAdmin() === null) {
+        // Every admin page except the login form needs a signed-in admin.
         header('Location: ' . url('admin/login'));
         exit;
     }

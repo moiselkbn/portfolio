@@ -13,6 +13,8 @@ $title = 'Admin';
 <h1>Admin</h1>
 <p>Signed in as <?= e($admin['username']) ?>.</p>
 
+<p><a href="<?= e(url('admin/projects')) ?>">Manage projects</a></p>
+
 <form method="post" action="<?= e(url('admin/logout')) ?>">
   <?= csrfField() ?>
   <button class="button" type="submit">Sign out</button>

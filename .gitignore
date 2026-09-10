@@ -21,3 +21,11 @@ Thumbs.db
 # Dependencies (unused — vanilla project, kept as a safety net)
 /vendor/
 /node_modules/
+
+# Raw / heavy source assets — only compressed, web-ready media belongs in the repo
+*.psd
+*.ai
+*.tif
+*.tiff
+*.mov
+*.mp4

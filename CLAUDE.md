@@ -61,7 +61,10 @@ Déploiement : envoi manuel par FTP (FileZilla) vers O2Switch.
 
 ## Git
 - Tout se passe sur `main`, pas de branches (projet solo)
-- Ne jamais commiter spontanément : proposer le message, attendre la validation, puis exécuter
+- Ne jamais commiter spontanément : proposer le message **et la liste exacte des fichiers stagés**, attendre la validation, puis exécuter
+- Jamais `git add -A` ni `git add .` : toujours des chemins explicites, pour ne committer que ce sur quoi on travaille
+- Un commit raconte **un seul** changement — si le message a besoin d'un « et aussi… », c'est deux commits
+- Médias : versionnés, mais ajoutés **projet par projet** une fois nettoyés (nom minuscules-tirets, WebP, < 300 Ko) — jamais en bloc
 
 ## Tests
 Aucun test dans ce projet.

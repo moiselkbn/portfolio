@@ -1,0 +1,16 @@
+# public/medias/ holds only static media (images, videos) — placed by hand or
+# written by the admin upload. Nothing here may ever be executed as a script.
+
+# Deny any request for a script file, whatever the server config.
+<FilesMatch "\.(?i:php|phtml|phps|phar|php[0-9]|cgi|pl|py|sh|asp|aspx|jsp)$">
+  Require all denied
+</FilesMatch>
+
+# Belt and braces: strip any handler/type that would run these as code.
+<IfModule mod_mime.c>
+  RemoveHandler .php .phtml .phar .cgi .pl .py
+  RemoveType .php .phtml .phar
+</IfModule>
+
+# No directory listing, no CGI execution.
+Options -Indexes -ExecCGI

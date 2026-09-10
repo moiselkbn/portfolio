@@ -113,8 +113,11 @@ h4 { font-size: clamp(1.25rem, 1vw + 0.75rem, 1.4375rem); }
   outline-offset: 2px;
 }
 
-/* Soft hover, inverted :active with a scale drop and no transition. */
-:active {
+/* Press feedback on things you actually click — a bare :active also matches
+   every ancestor up to <html>, which would shrink the whole page on any click. */
+a:active,
+button:active,
+summary:active {
   transform: scale(0.97);
   transition: none;
 }

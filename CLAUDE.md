@@ -111,7 +111,7 @@ Les jetons vivent dans `public/assets/style/style.css` (bloc `:root`) — toujou
 - Rayons : `--radius-none` 0 · `--radius-sm` 3 · `--radius-base` 6 · `--radius-lg` 12 · `--radius-full` 999
 - Animations : 200 ms avec `--ease` = `cubic-bezier(0, 0, 0.23, 1)`
 - États : survol doux ; `:active` inversé + `scale(0.97)` sans transition
-- Pas d'ombre portée, pas de dégradé — **exception unique** : le halo diffus (`--color-neutral-light`) derrière le wordmark « Moïse Lukebanu » géant du footer, qui est le geste signature du site. Aucune autre ombre ailleurs.
+- Pas d'ombre portée, pas de dégradé — **exception unique** : le wordmark « Moïse Lukebanu » géant du footer porte un **contour de texte** (`-webkit-text-stroke`, couleur `--color-neutral-light`, épaisseur ~`0.1875em` = 48 px pour 256 px de police dans Figma), peint derrière le remplissage via `paint-order: stroke fill`. C'est un contour, pas une ombre, et c'est le geste signature du site. Aucun autre effet de ce type ailleurs — le « Moïse Lukebanu » de la navbar reste du texte nu.
 - Responsive continu de 320 à 1920 px : breakpoints dictés par le contenu, jamais par un appareil
 
 ## Composants

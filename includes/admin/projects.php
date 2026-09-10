@@ -70,6 +70,110 @@ function findProjectById(int $id): ?array
 }
 
 /**
+ * The empty form shape — used for a blank "new project" form and as the base
+ * both createProject() and validateProject() expect.
+ *
+ * @return array<string, mixed>
+ */
+function emptyProjectForm(): array
+{
+    return [
+        'title'          => '',
+        'year'           => '',
+        'status'         => 'draft',
+        'context'        => '',
+        'role'           => '',
+        'result'         => '',
+        'decisions'      => [],
+        'annex_stack'    => [],
+        'annex_repo_url' => '',
+        'annex_retro'    => '',
+    ];
+}
+
+/**
+ * Turn the raw $_POST of the project form into the clean shape above:
+ * empty decision slots dropped, annex_stack split on commas.
+ *
+ * @return array<string, mixed>
+ */
+function projectDataFromPost(): array
+{
+    $decisions = [];
+    foreach ((array) ($_POST['decisions'] ?? []) as $d) {
+        $slot = [
+            'probleme' => trim((string) ($d['probleme'] ?? '')),
+            'options'  => trim((string) ($d['options'] ?? '')),
+            'choix'    => trim((string) ($d['choix'] ?? '')),
+        ];
+        if ($slot['probleme'] !== '' || $slot['options'] !== '' || $slot['choix'] !== '') {
+            $decisions[] = $slot;
+        }
+    }
+
+    $stack = array_values(array_filter(
+        array_map('trim', explode(',', (string) ($_POST['annex_stack'] ?? '')))
+    ));
+
+    return [
+        'title'          => trim((string) ($_POST['title'] ?? '')),
+        'year'           => trim((string) ($_POST['year'] ?? '')),
+        'status'         => (string) ($_POST['status'] ?? 'draft'),
+        'context'        => trim((string) ($_POST['context'] ?? '')),
+        'role'           => trim((string) ($_POST['role'] ?? '')),
+        'result'         => trim((string) ($_POST['result'] ?? '')),
+        'decisions'      => $decisions,
+        'annex_stack'    => $stack,
+        'annex_repo_url' => trim((string) ($_POST['annex_repo_url'] ?? '')),
+        'annex_retro'    => trim((string) ($_POST['annex_retro'] ?? '')),
+    ];
+}
+
+/**
+ * Server-side validation. Returns a map of field name => error message
+ * (empty array = the data is good to save). $exceptId is the project being
+ * edited, so its own slug does not count as a collision.
+ *
+ * @param array<string, mixed> $data
+ * @return array<string, string>
+ */
+function validateProject(array $data, ?int $exceptId = null): array
+{
+    $errors = [];
+
+    if ($data['title'] === '') {
+        $errors['title'] = 'Le titre est obligatoire.';
+    } elseif (slugExists(slugify($data['title']), $exceptId)) {
+        $errors['title'] = 'Un projet avec un titre similaire existe déjà.';
+    }
+
+    // /u: treat the string as UTF-8 so the en-dash "–" is one character.
+    if (!preg_match('/^\d{4}(\s*[–-]\s*\d{4})?$/u', $data['year'])) {
+        $errors['year'] = 'Format d\'année invalide (ex. 2025 ou 2023–2026).';
+    }
+
+    if (!in_array($data['status'], ['draft', 'lab', 'featured'], true)) {
+        $errors['status'] = 'Statut invalide.';
+    }
+
+    if ($data['annex_repo_url'] !== ''
+        && !filter_var($data['annex_repo_url'], FILTER_VALIDATE_URL)) {
+        $errors['annex_repo_url'] = 'URL invalide.';
+    }
+
+    if ($data['status'] === 'featured') {
+        if ($data['role'] === '') {
+            $errors['role'] = 'Le rôle est obligatoire pour un projet mis en avant.';
+        }
+        if (count($data['decisions']) < 3) {
+            $errors['decisions'] = 'Un projet mis en avant demande au moins 3 décisions.';
+        }
+    }
+
+    return $errors;
+}
+
+/**
  * Map validated form data to the named parameters shared by INSERT and UPDATE.
  * JSON columns are encoded here; empty optional text becomes NULL.
  *

@@ -33,9 +33,10 @@ $routes = [
     '/'               => 'home',
     '/about'          => 'about',
     '/lab'            => 'lab',
-    '/admin'          => 'admin/dashboard',
-    '/admin/login'    => 'admin/login',
-    '/admin/projects' => 'admin/projects',
+    '/admin'              => 'admin/dashboard',
+    '/admin/login'        => 'admin/login',
+    '/admin/projects'     => 'admin/projects',
+    '/admin/projects/new' => 'admin/project-form',
 ];
 
 $view = $routes[$path] ?? null;
@@ -56,6 +57,7 @@ if ($view === null) {
 $loginError = null;
 if (str_starts_with($view, 'admin/')) {
     require_once dirname(__DIR__) . '/includes/admin/projects.php';
+    require_once dirname(__DIR__) . '/includes/flash.php';
     startSession();
 
     if ($view === 'admin/login') {
@@ -78,6 +80,25 @@ if (str_starts_with($view, 'admin/')) {
         // Every admin page except the login form needs a signed-in admin.
         header('Location: ' . url('admin/login'));
         exit;
+    }
+
+    // Create a project.
+    if ($view === 'admin/project-form') {
+        $isEdit = false;
+        $errors = [];
+        $form = emptyProjectForm();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            checkCsrf();
+            $form = projectDataFromPost();
+            $errors = validateProject($form);
+            if (!$errors) {
+                $id = createProject($form);
+                flash('Project created.');
+                header('Location: ' . url("admin/projects/{$id}/edit"));
+                exit;
+            }
+        }
     }
 }
 

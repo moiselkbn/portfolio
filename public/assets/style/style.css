@@ -235,6 +235,43 @@ h1 {
   font-weight: 600;
 }
 
+.flash {
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-base);
+}
+
+.form--wide {
+  max-width: 640px;
+}
+
+.form textarea.form__input {
+  resize: vertical;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: var(--radius-base);
+}
+
+.form__decision {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+.form__decision:first-of-type {
+  border-top: 0;
+}
+
 .form__row {
   display: flex;
   flex-direction: column;

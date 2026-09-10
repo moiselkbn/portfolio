@@ -28,7 +28,11 @@ $projects = allProjects();
         <td><?= e($p['year']) ?></td>
         <td><?= e($p['status']) ?></td>
         <td><?= e($p['updated_at']) ?></td>
-        <td><a href="<?= e(url('admin/projects/' . $p['id'] . '/edit')) ?>">Edit</a></td>
+        <td>
+          <a href="<?= e(url('admin/projects/' . $p['id'] . '/edit')) ?>">Edit</a>
+          &middot;
+          <a href="<?= e(url('admin/projects/' . $p['id'] . '/delete')) ?>">Delete</a>
+        </td>
       </tr>
     <?php endforeach; ?>
 

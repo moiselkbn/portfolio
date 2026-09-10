@@ -55,6 +55,13 @@ if ($view === null && preg_match('#^/admin/projects/(\d+)/edit$#', $path, $match
     $editId = (int) $matches[1];
 }
 
+// Dynamic route: /admin/projects/{id}/delete
+$deleteId = null;
+if ($view === null && preg_match('#^/admin/projects/(\d+)/delete$#', $path, $matches) === 1) {
+    $view = 'admin/project-delete';
+    $deleteId = (int) $matches[1];
+}
+
 if ($view === null) {
     http_response_code(404);
     $view = '404';
@@ -124,10 +131,26 @@ if (str_starts_with($view, 'admin/')) {
             }
         }
     }
+
+    // Delete a project — GET shows a confirmation page, POST does it.
+    if ($view === 'admin/project-delete') {
+        $project = findProjectById($deleteId);
+        if ($project === null) {
+            http_response_code(404);
+            $view = '404';
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            checkCsrf();
+            deleteProject($deleteId);
+            flash('Project deleted.');
+            header('Location: ' . url('admin/projects'));
+            exit;
+        }
+    }
 }
 
-// The project page only exists for a real project; anything else is a 404.
-$project = null;
+// The public project page only exists for a real project; anything else 404s.
+// (No "$project = null" here — the admin delete branch sets $project too and
+// this ran after it, blanking it before the view rendered.)
 if ($view === 'project') {
     $project = findFeaturedProjectBySlug($slug);
     if ($project === null) {

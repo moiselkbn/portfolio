@@ -26,7 +26,8 @@ $err = static function (string $field) use ($errors): string {
 
 <p><a href="<?= e(url('admin/projects')) ?>">&larr; Back to projects</a></p>
 
-<form class="form form--wide" method="post" action="<?= e($action) ?>">
+<form class="form form--wide" method="post" action="<?= e($action) ?>"
+      enctype="multipart/form-data">
   <?= csrfField() ?>
 
   <p class="form__row">
@@ -51,6 +52,18 @@ $err = static function (string $field) use ($errors): string {
       <?php endforeach; ?>
     </select>
     <?= $err('status') ?>
+  </p>
+
+  <p class="form__row">
+    <label class="form__label" for="cover_image">Cover image (jpeg, png or webp)</label>
+    <?php if (!empty($form['cover_image']) && $isEdit): ?>
+      <img class="form__preview"
+           src="<?= e(url('medias/' . slugify($form['title']) . '/' . $form['cover_image'])) ?>"
+           alt="Current cover">
+    <?php endif; ?>
+    <input class="form__input" type="file" id="cover_image" name="cover_image"
+           accept="image/jpeg,image/png,image/webp">
+    <?= $err('cover_image') ?>
   </p>
 
   <p class="form__row">

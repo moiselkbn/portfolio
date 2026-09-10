@@ -81,6 +81,7 @@ function emptyProjectForm(): array
         'title'          => '',
         'year'           => '',
         'status'         => 'draft',
+        'cover_image'    => null,
         'context'        => '',
         'role'           => '',
         'result'         => '',
@@ -104,6 +105,7 @@ function projectFormFromRow(array $row): array
         'title'          => (string) $row['title'],
         'year'           => (string) $row['year'],
         'status'         => (string) $row['status'],
+        'cover_image'    => $row['cover_image'] ?? null,
         'context'        => (string) ($row['context'] ?? ''),
         'role'           => (string) ($row['role'] ?? ''),
         'result'         => (string) ($row['result'] ?? ''),
@@ -210,6 +212,7 @@ function projectParams(array $data): array
         'title'          => trim((string) $data['title']),
         'year'           => trim((string) $data['year']),
         'status'         => $data['status'],
+        'cover_image'    => $data['cover_image'] ?: null,
         'context'        => $data['context'] ?: null,
         'role'           => $data['role'] ?: null,
         'result'         => $data['result'] ?: null,
@@ -229,10 +232,10 @@ function createProject(array $data): int
 {
     $stmt = db()->prepare(
         'INSERT INTO project
-           (slug, title, year, status, context, role, result,
+           (slug, title, year, status, cover_image, context, role, result,
             decisions, annex_stack, annex_repo_url, annex_retro)
          VALUES
-           (:slug, :title, :year, :status, :context, :role, :result,
+           (:slug, :title, :year, :status, :cover_image, :context, :role, :result,
             :decisions, :annex_stack, :annex_repo_url, :annex_retro)'
     );
     $stmt->execute(projectParams($data));
@@ -253,8 +256,8 @@ function updateProject(int $id, array $data): void
     db()->prepare(
         'UPDATE project SET
            slug = :slug, title = :title, year = :year, status = :status,
-           context = :context, role = :role, result = :result,
-           decisions = :decisions, annex_stack = :annex_stack,
+           cover_image = :cover_image, context = :context, role = :role,
+           result = :result, decisions = :decisions, annex_stack = :annex_stack,
            annex_repo_url = :annex_repo_url, annex_retro = :annex_retro
          WHERE id = :id'
     )->execute($params);

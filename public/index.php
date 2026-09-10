@@ -71,6 +71,7 @@ if ($view === null) {
 $loginError = null;
 if (str_starts_with($view, 'admin/')) {
     require_once dirname(__DIR__) . '/includes/admin/projects.php';
+    require_once dirname(__DIR__) . '/includes/admin/uploads.php';
     require_once dirname(__DIR__) . '/includes/flash.php';
     startSession();
 
@@ -116,7 +117,32 @@ if (str_starts_with($view, 'admin/')) {
         if ($view === 'admin/project-form' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             checkCsrf();
             $form = projectDataFromPost();
+            // cover_image is not a text field: keep the current one unless a new
+            // upload replaces it below.
+            $form['cover_image'] = $isEdit ? ($project['cover_image'] ?? null) : null;
+
             $errors = validateProject($form, $editId);
+
+            $hasUpload = ($_FILES['cover_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+            if ($hasUpload) {
+                $uploadError = validateUploadedImage($_FILES['cover_image']);
+                if ($uploadError !== null) {
+                    $errors['cover_image'] = $uploadError;
+                }
+            }
+
+            // Write the file only once the whole form is valid.
+            if (!$errors && $hasUpload) {
+                try {
+                    $form['cover_image'] = storeUploadedImage(
+                        $_FILES['cover_image'],
+                        slugify($form['title'])
+                    );
+                } catch (RuntimeException $e) {
+                    $errors['cover_image'] = $e->getMessage();
+                }
+            }
+
             if (!$errors) {
                 if ($isEdit) {
                     updateProject($editId, $form);

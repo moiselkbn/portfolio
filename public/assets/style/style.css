@@ -295,6 +295,12 @@ h1 {
   color: var(--color-error);
 }
 
+.form__preview {
+  width: 160px;
+  height: auto;
+  border-radius: var(--radius-base);
+}
+
 .button {
   align-self: start;
   padding: var(--space-1) var(--space-3);

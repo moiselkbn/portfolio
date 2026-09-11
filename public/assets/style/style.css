@@ -476,14 +476,13 @@ summary:active {
   font-size: 16px; /* Body/Base — Figma "Button" */
   color: var(--color-text);
   background-color: var(--color-neutral-light);
-  border: 3px solid transparent; /* reserve room so :focus doesn't shift layout */
+  border: 0;
   border-radius: var(--radius-base);
   text-decoration: none;
   cursor: pointer;
   transition:
     background-color var(--duration) var(--ease),
-    color var(--duration) var(--ease),
-    border-color var(--duration) var(--ease);
+    color var(--duration) var(--ease);
 }
 
 /* External buttons carry the arrow: less right padding (Figma 16 / 10). */
@@ -493,10 +492,6 @@ summary:active {
 
 .button:hover {
   background-color: var(--color-neutral);
-}
-
-.button:focus-visible {
-  border-color: var(--color-text);
 }
 
 /* :active inverted + scale, no transition (CLAUDE.md). */

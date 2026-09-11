@@ -134,6 +134,10 @@ summary:active {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-5) var(--space-3);
+  /* .navbar is now position: fixed, so it no longer pushes this element down
+     by taking up space in the flex column — top padding is bumped by one
+     more step (--space-4) to clear it instead. */
+  padding-top: calc(var(--space-5) + var(--space-4));
 }
 
 /* Navbar --------------------------------------------------------------- */
@@ -148,6 +152,17 @@ summary:active {
   justify-content: space-between;
   gap: var(--space-2) var(--space-3);
   padding: var(--space-3) var(--space-4); /* 24px vertical / 32px horizontal (Figma) */
+  /* Fixed to the viewport: stays pinned while the page scrolls underneath it.
+     Same color as the page background, so it reads as an opaque bar rather
+     than a floating strip once content scrolls underneath. */
+  background-color: var(--color-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* 10 is arbitrary but not a design token — it only has to clear normal
+     content (z-index: auto everywhere else), so any small value works. */
+  z-index: 10;
 }
 
 .navbar__home {

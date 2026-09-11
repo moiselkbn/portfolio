@@ -134,6 +134,7 @@ Les composants existent déjà dans Figma (page « Prototype ») avec leurs éta
 
 ## Contenu éditorial
 - Langue du site : **anglais** (`<html lang="en">`). Cible principale en Belgique, mais le code, les commentaires et les identifiants sont déjà en anglais (voir Conventions) — un site unilingue anglais est cohérent avec ça, et l'anglais est la langue de travail standard du secteur tech, y compris pour un public belge francophone/néerlandophone. Pas de bascule FR/EN : un site fini dans une langue plutôt qu'à moitié traduit dans deux.
+- Langue du backoffice admin (labels, boutons, messages, placeholders) : **français** — décision du 11 septembre 2026. Ne s'applique qu'à l'interface d'admin (`layout-admin.php` et vues `admin/*`) ; le contenu saisi dans ces écrans (titres de projet, textes affichés sur le site public) reste en anglais, seule l'interface elle-même change de langue
 - Aucune mention croisée entre projets : un projet ne cite jamais un autre projet du portfolio, le visiteur n'a aucun moyen de savoir de quoi il s'agit
 
 ## Accessibilité, médias et performance

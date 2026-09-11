@@ -39,7 +39,7 @@ Déploiement : envoi manuel par FTP (FileZilla) vers O2Switch.
 
 ## Routes
 - 5 routes publiques : `/` · `/projects/{slug}` · `/about` · `/lab` · `/404`
-- Contact : pas de *page* dédiée — ancre `#contact`, le formulaire vit dans le `<footer>` (sur toutes les pages). Le POST du formulaire sera reçu sur `/contact` (traitement seul, aucune page rendue) — route à implémenter en F3, pas encore branchée
+- Contact : pas de *page* dédiée — ancre `#contact`, le formulaire vit dans le `<footer>` (sur toutes les pages). Le POST du formulaire est reçu sur `/contact` (traitement seul, aucune page rendue) — implémenté le 11 septembre 2026 : CSRF, honeypot + anti-spam par délai, validation serveur, envoi (`mail()` en production, fichier de log en local sous MAMP)
 - Routes admin (gérées par le même `public/index.php`, gabarit `layout-admin.php`), toutes protégées sauf `/admin/login` :
   `/admin` (tableau de bord) · `/admin/login` (GET formulaire, POST connexion) · `/admin/logout` (POST) ·
   `/admin/projects` (liste) · `/admin/projects/new` (création) · `/admin/projects/{id}/edit` · `/admin/projects/{id}/delete` (GET confirme, POST supprime).
@@ -95,7 +95,7 @@ Aucun test dans ce projet.
 
 ## Configuration
 - Fichier `.env` pour les valeurs d'environnement ; maintenir `.env.example` à jour à chaque nouvelle variable
-- Variables : `APP_ENV` (`local` ou `production` — jamais déduit de `HTTP_HOST` ; pilote l'affichage des erreurs), `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`
+- Variables : `APP_ENV` (`local` ou `production` — jamais déduit de `HTTP_HOST` ; pilote l'affichage des erreurs), `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`, `CONTACT_TO` (adresse qui reçoit les messages du formulaire de contact), `CONTACT_FROM` (adresse d'expédition, doit être sur notre propre domaine pour le SPF — l'adresse du visiteur part en Reply-To, jamais en From)
 - Local : MAMP, port 8888 — projet dans `/Applications/MAMP/htdocs/PORTFOLIO_2026_V3`
 - Production : https://moise.techniques-graphiques.be/
 

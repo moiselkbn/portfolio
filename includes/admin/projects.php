@@ -43,6 +43,21 @@ function slugExists(string $slug, ?int $exceptId = null): bool
 }
 
 /**
+ * French label for a status value, for display only — the stored value and
+ * the <select> options stay the English ENUM ('draft'/'lab'/'featured'),
+ * only what the admin reads on screen changes (CLAUDE.md § Contenu éditorial).
+ */
+function statusLabel(string $status): string
+{
+    return match ($status) {
+        'draft'    => 'Brouillon',
+        'lab'      => 'Lab',
+        'featured' => 'Mis en avant',
+        default    => $status,
+    };
+}
+
+/**
  * Every project, most recently changed first — the admin list.
  *
  * @return array<int, array<string, mixed>>
@@ -81,7 +96,8 @@ function emptyProjectForm(): array
         'title'          => '',
         'year'           => '',
         'status'         => 'draft',
-        'cover_image'    => null,
+        'domains'        => [],
+        'cover_media'    => null,
         'context'        => '',
         'role'           => '',
         'result'         => '',
@@ -105,7 +121,8 @@ function projectFormFromRow(array $row): array
         'title'          => (string) $row['title'],
         'year'           => (string) $row['year'],
         'status'         => (string) $row['status'],
-        'cover_image'    => $row['cover_image'] ?? null,
+        'domains'        => $row['domains'] ? json_decode((string) $row['domains'], true) : [],
+        'cover_media'    => $row['cover_media'] ?? null,
         'context'        => (string) ($row['context'] ?? ''),
         'role'           => (string) ($row['role'] ?? ''),
         'result'         => (string) ($row['result'] ?? ''),
@@ -118,7 +135,7 @@ function projectFormFromRow(array $row): array
 
 /**
  * Turn the raw $_POST of the project form into the clean shape above:
- * empty decision slots dropped, annex_stack split on commas.
+ * empty decision slots dropped, annex_stack and domains split on commas.
  *
  * @return array<string, mixed>
  */
@@ -140,10 +157,15 @@ function projectDataFromPost(): array
         array_map('trim', explode(',', (string) ($_POST['annex_stack'] ?? '')))
     ));
 
+    $domains = array_values(array_filter(
+        array_map('trim', explode(',', (string) ($_POST['domains'] ?? '')))
+    ));
+
     return [
         'title'          => trim((string) ($_POST['title'] ?? '')),
         'year'           => trim((string) ($_POST['year'] ?? '')),
         'status'         => (string) ($_POST['status'] ?? 'draft'),
+        'domains'        => $domains,
         'context'        => trim((string) ($_POST['context'] ?? '')),
         'role'           => trim((string) ($_POST['role'] ?? '')),
         'result'         => trim((string) ($_POST['result'] ?? '')),
@@ -181,6 +203,10 @@ function validateProject(array $data, ?int $exceptId = null): array
         $errors['status'] = 'Statut invalide.';
     }
 
+    if (!$data['domains']) {
+        $errors['domains'] = 'Au moins une discipline est requise.';
+    }
+
     if ($data['annex_repo_url'] !== ''
         && !filter_var($data['annex_repo_url'], FILTER_VALIDATE_URL)) {
         $errors['annex_repo_url'] = 'URL invalide.';
@@ -200,7 +226,9 @@ function validateProject(array $data, ?int $exceptId = null): array
 
 /**
  * Map validated form data to the named parameters shared by INSERT and UPDATE.
- * JSON columns are encoded here; empty optional text becomes NULL.
+ * JSON columns are encoded here; empty optional text becomes NULL. domains is
+ * the one JSON column that is never NULL (NOT NULL in the schema) — validateProject()
+ * already rejects an empty list before this runs, so it's always encoded.
  *
  * @param array<string, mixed> $data
  * @return array<string, mixed>
@@ -212,7 +240,8 @@ function projectParams(array $data): array
         'title'          => trim((string) $data['title']),
         'year'           => trim((string) $data['year']),
         'status'         => $data['status'],
-        'cover_image'    => $data['cover_image'] ?: null,
+        'domains'        => json_encode($data['domains']),
+        'cover_media'    => $data['cover_media'] ?: null,
         'context'        => $data['context'] ?: null,
         'role'           => $data['role'] ?: null,
         'result'         => $data['result'] ?: null,
@@ -232,10 +261,10 @@ function createProject(array $data): int
 {
     $stmt = db()->prepare(
         'INSERT INTO project
-           (slug, title, year, status, cover_image, context, role, result,
+           (slug, title, year, status, domains, cover_media, context, role, result,
             decisions, annex_stack, annex_repo_url, annex_retro)
          VALUES
-           (:slug, :title, :year, :status, :cover_image, :context, :role, :result,
+           (:slug, :title, :year, :status, :domains, :cover_media, :context, :role, :result,
             :decisions, :annex_stack, :annex_repo_url, :annex_retro)'
     );
     $stmt->execute(projectParams($data));
@@ -256,9 +285,10 @@ function updateProject(int $id, array $data): void
     db()->prepare(
         'UPDATE project SET
            slug = :slug, title = :title, year = :year, status = :status,
-           cover_image = :cover_image, context = :context, role = :role,
-           result = :result, decisions = :decisions, annex_stack = :annex_stack,
-           annex_repo_url = :annex_repo_url, annex_retro = :annex_retro
+           domains = :domains, cover_media = :cover_media, context = :context,
+           role = :role, result = :result, decisions = :decisions,
+           annex_stack = :annex_stack, annex_repo_url = :annex_repo_url,
+           annex_retro = :annex_retro
          WHERE id = :id'
     )->execute($params);
 }

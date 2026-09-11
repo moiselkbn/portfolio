@@ -23,8 +23,9 @@ CREATE TABLE project (
   slug           VARCHAR(255) NOT NULL,                 -- derived from title, unique
   title          VARCHAR(255) NOT NULL,
   year           VARCHAR(20)  NOT NULL,                 -- "2025" or a range "2023–2026"
-  cover_image    VARCHAR(255) DEFAULT NULL,             -- file name inside medias/<project>/
+  cover_media    VARCHAR(255) DEFAULT NULL,             -- file name inside medias/<project>/, image or video (.webm placed by hand — see includes/admin/uploads.php)
   gallery        JSON         DEFAULT NULL,             -- [{ "src": "...", "caption": "..." }]
+  domains        JSON         NOT NULL,                 -- ["3D", "Web Dev", ...] — every project has at least one
   context        TEXT         DEFAULT NULL,
   role           TEXT         DEFAULT NULL,
   result         TEXT         DEFAULT NULL,

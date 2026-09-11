@@ -11,11 +11,11 @@ $title = 'Admin';
 ?>
 
 <h1>Admin</h1>
-<p>Signed in as <?= e($admin['username']) ?>.</p>
+<p>Connecté en tant que <?= e($admin['username']) ?>.</p>
 
-<p><a href="<?= e(url('admin/projects')) ?>">Manage projects</a></p>
+<p><a href="<?= e(url('admin/projects')) ?>">Gérer les projets</a></p>
 
 <form method="post" action="<?= e(url('admin/logout')) ?>">
   <?= csrfField() ?>
-  <button class="button" type="submit">Sign out</button>
+  <button class="button" type="submit">Se déconnecter</button>
 </form>

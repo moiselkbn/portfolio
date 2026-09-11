@@ -18,7 +18,7 @@ require_once __DIR__ . '/database.php';
 function getFeaturedProjects(): array
 {
     $stmt = db()->prepare(
-        'SELECT id, slug, title, year, cover_image
+        'SELECT id, slug, title, year, cover_media
          FROM project
          WHERE status = ?
          ORDER BY created_at DESC'
@@ -36,7 +36,7 @@ function getFeaturedProjects(): array
 function getLabProjects(): array
 {
     $stmt = db()->prepare(
-        'SELECT id, slug, title, year, cover_image
+        'SELECT id, slug, title, year, cover_media
          FROM project
          WHERE status = ?
          ORDER BY created_at DESC'

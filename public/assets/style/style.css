@@ -67,6 +67,15 @@ video {
    Base
    ========================================================================== */
 
+/* Smooth-scrolls to #contact (the only in-page anchor on the site) instead of
+   snapping straight there — only when the visitor hasn't asked the OS for
+   reduced motion (WCAG AA target, CLAUDE.md § Accessibilité). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   display: flex;
   min-height: 100vh;
@@ -392,6 +401,86 @@ summary:active {
 .field__input--message {
   min-height: 103px;
   resize: vertical;
+}
+
+/* ==========================================================================
+   404
+   ========================================================================== */
+
+/* Fixed to the viewport (inset: 0, not min-height: 100vh) so it's centered
+   on the actual screen at any device size, independent of .layout__main's
+   padding/max-width and of .navbar now being position: fixed above it (a
+   flow-based height could grow past one screen, or sit off-center once the
+   navbar stopped pushing content down — a viewport-anchored box can't).
+   No footer on this page (layout.php, $hideFooter) and .layout--no-scroll
+   below block any scrolling, so there's nothing that could ever render
+   behind this — no z-index or background-color needed to guard against it. */
+.error-404 {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3); /* Figma: gap between the heading block and the button */
+  text-align: center;
+}
+
+/* Set on <body> by layout.php when a view hides the footer (404.php) — that
+   page is a fixed full screen with nothing to scroll to, so scrolling is
+   blocked outright rather than left as dead, confusing space. */
+.layout--no-scroll {
+  overflow: hidden;
+}
+
+/* A flex item that isn't stretched sizes to its content's preferred (single
+   line) width — .error-404's align-items: center makes this div size to fit
+   "This page could not be found" on one line instead of wrapping, which
+   overflows past the screen edge on narrow viewports. width: 100% restores
+   normal wrapping by giving its text an actual line length to wrap against,
+   without changing the button next to it (still centered, still fit-content,
+   since align-items: center on .error-404 still applies to it). */
+.error-404__heading {
+  width: 100%;
+  padding: 0 var(--space-3); /* breathing room before text touches the edges */
+}
+
+.error-404__number {
+  /* "Heading/Big H1 - 320" (desktop) down to 64px (mobile, from the Figma
+     "404 — Mobile" frame) — the one place this off-scale size is used
+     (CLAUDE.md § Interface). The desktop frame is empty in Figma, so this
+     clamp's ramp (spanning the full 320-1920px responsive range, unlike the
+     narrower mid-range ramps the other headings use) is our own construction,
+     not a value pulled from a mockup — open to retuning. */
+  height: clamp(4rem, 16vw + 0.8rem, 20rem);
+  width: auto;
+  margin: 0 auto;
+}
+
+/* Random scatter of medias/404.svg, spawned by assets/js/error-404.js — see
+   that file for placement logic. Sits behind .error-404__heading/.button in
+   paint order simply by coming first in the DOM (both are z-index: auto). */
+.error-404__scatter {
+  position: absolute;
+  inset: 0;
+  overflow: hidden; /* placement math keeps images in-bounds; belt and suspenders */
+  pointer-events: none; /* decorative only, must never sit between a click and its target */
+}
+
+.error-404__scatter-item {
+  position: absolute;
+  /* The asset's native size (public/medias/404.svg) is 90×64 — ×1.1 then ×0.8
+     here (see assets/js/error-404.js for the full math). Must match that
+     script's imageWidth/imageHeight exactly, since it places these by that
+     same size. */
+  width: 79.2px;
+  height: 56.32px;
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(0, 0.65, 0.05, 1);
+}
+
+.error-404__scatter-item.active {
+  opacity: 1;
 }
 
 /* ==========================================================================

@@ -32,6 +32,9 @@ define('DB_NAME', $_ENV['DB_NAME'] ?? '');
 define('DB_USER', $_ENV['DB_USER'] ?? '');
 define('DB_PASS', $_ENV['DB_PASS'] ?? '');
 
+define('CONTACT_TO', $_ENV['CONTACT_TO'] ?? '');
+define('CONTACT_FROM', $_ENV['CONTACT_FROM'] ?? '');
+
 // Show errors locally, hide (and log) them in production.
 if (APP_ENV === 'local') {
     ini_set('display_errors', '1');

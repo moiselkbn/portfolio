@@ -7,6 +7,9 @@ require_once dirname(__DIR__) . '/includes/projects.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/csrf.php';
 require_once dirname(__DIR__) . '/includes/errors.php';
+// Contact form is in the footer on every page, so its helpers load everywhere:
+// the POST handler below, and takeContactState() called from ContactForm.php.
+require_once dirname(__DIR__) . '/includes/contact.php';
 
 registerErrorHandlers();
 
@@ -42,6 +45,29 @@ if ($path === '/admin/logout' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     checkCsrf();
     logout();
     header('Location: ' . url('admin/login'));
+    exit;
+}
+
+// Contact form POST — an action, never a page. Validate, deliver, then redirect
+// back to the form (PRG) where ContactForm.php shows the result.
+if ($path === '/contact' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    checkCsrf();
+
+    $data = contactInput();
+
+    if (contactLooksLikeSpam()) {
+        contactSucceed();                 // swallow it silently — tell the bot nothing
+    } else {
+        $errors = validateContact($data);
+        if ($errors) {
+            contactFail($errors, $data);
+        } else {
+            sendContactEmail($data);
+            contactSucceed();
+        }
+    }
+
+    header('Location: ' . url('#contact'));
     exit;
 }
 

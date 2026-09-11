@@ -275,6 +275,27 @@ summary:active {
   align-self: stretch;
 }
 
+/* Post-submit confirmation line (green, same language as .flash). */
+.contact__status {
+  align-self: stretch;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-base);
+}
+
+/* Honeypot: kept in the DOM for bots, moved out of sight and off the tab order
+   for people. Not display:none — some bots skip hidden fields. */
+.contact__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .contact__fields {
   display: flex;
   flex-direction: column;
@@ -289,6 +310,10 @@ summary:active {
 
 .contact__row .field {
   flex: 1;
+  /* Overrides the implicit min-width: auto flex items get by default — without
+     it, the <input>'s own minimum width (bigger in Safari) stops this field
+     from shrinking, and the whole page overflows horizontally. */
+  min-width: 0;
 }
 
 /* Field (design-system component) ----------------------------------- */
@@ -306,6 +331,18 @@ summary:active {
 
 .field__required {
   color: var(--color-error);
+}
+
+/* Validation message under the field (CLAUDE.md § Formulaires). */
+.field__error {
+  font-size: 14px;
+  color: var(--color-error);
+}
+
+/* Invalid field: outline doesn't shift layout, unlike a border swap. */
+.field__input[aria-invalid="true"] {
+  outline: 2px solid var(--color-error);
+  outline-offset: -2px;
 }
 
 .field__input {

@@ -76,13 +76,16 @@ Aucun test dans ce projet.
 - Moteur : MySQL, base locale `portfolio_2026_v3`
 - Schéma versionné dans `config/schema.sql`, données de départ dans `config/seed.sql` — appliqués à la main (phpMyAdmin), aucun outil de migration
 - Deux tables maximum : aucune table supplémentaire sans besoin réel démontré
-- `project` : id, slug (généré automatiquement depuis le titre), title, year, cover_image, gallery,
-  context, role, result, decisions, annex_stack, annex_repo_url, annex_retro, status,
+- `project` : id, slug (généré automatiquement depuis le titre), title, year, cover_media, gallery,
+  domains, context, role, result, decisions, annex_stack, annex_repo_url, annex_retro, status,
   created_at, updated_at
 - `admin_user` : id, username, password_hash, created_at
 - `year` est un VARCHAR : accepte une année seule (`2025`) ou une plage (`2023–2026`) pour un projet repris
+- `cover_media` : image ou vidéo (`.webm`) — une vidéo se dépose à la main dans `medias/{slug}/`, jamais via le formulaire d'upload (qui n'accepte que jpeg/png/webp, voir Sécurité). N'est utilisé que par les projets `featured`
+- `domains` est un JSON, jamais vide (`NOT NULL`) : les disciplines du projet (ex. `["3D", "Web Dev"]`), affichées en `Chip` — un projet peut en avoir plusieurs
+- `gallery` : JSON, l'ensemble ordonné des images/vidéos du projet, y compris l'image de couverture si elle y figure aussi. Pour un projet `lab`, c'est la seule source visuelle (pas de `cover_media`, pas de légende affichée — uniquement titre, année, images, domaines)
 - `status` est un ENUM `draft` | `lab` | `featured` — un seul champ, trois états mutuellement exclusifs : `draft` (non publié, visible nulle part), `lab` (publié, grille de `/lab` en lightbox), `featured` (mis en avant sur l'accueil, avec page `/projects/{slug}` dédiée). Défaut : `lab`. Remplace les anciens booléens `is_featured` + `published` — décision du 9 septembre 2026, deux booléens autorisaient l'état incohérent « en avant mais non publié »
-- `decisions`, `gallery` et `annex_stack` sont stockés en JSON — jamais `serialize()`
+- `decisions`, `gallery`, `domains` et `annex_stack` sont stockés en JSON — jamais `serialize()`
 - `annex_retro` est stocké mais volontairement non affiché sur le site
 
 ## Sécurité
@@ -116,7 +119,10 @@ Exception : `--ease` et `--duration` (mouvement) sont des **jetons locaux** — 
 - Rayons : `--radius-none` 0 · `--radius-sm` 3 · `--radius-base` 6 · `--radius-lg` 12 · `--radius-full` 999
 - Animations : `--duration` 200 ms · `--ease` `cubic-bezier(0, 0, 0.23, 1)` (jetons locaux, cf. ci-dessus)
 - États : survol doux ; `:active` inversé + `scale(0.97)` sans transition
-- Pas d'ombre portée, pas de dégradé — **exception unique** : le wordmark « Moïse Lukebanu » géant du footer porte un **contour de texte** (`-webkit-text-stroke`, couleur `--color-neutral-light`, épaisseur ~`0.1875em` = 48 px pour 256 px de police dans Figma), peint derrière le remplissage via `paint-order: stroke fill`. C'est un contour, pas une ombre, et c'est le geste signature du site. Aucun autre effet de ce type ailleurs — le « Moïse Lukebanu » de la navbar reste du texte nu.
+- Pas d'ombre portée, pas de dégradé.
+- Le nom « Moïse Lukebanu » dans la navbar est un mot-symbole avec contour — **décision du 11 septembre 2026** : ce n'est plus du texte + CSS mais un **asset SVG prédessiné**, `public/medias/title-name.svg`, inséré en `<img>` (jamais recréé en CSS). Deux techniques CSS ont été essayées et abandonnées avant ça : `-webkit-text-stroke` (dessine un trait à cheval sur le contour de la lettre — sur un trait fin comme le jambage du « i » en Instrument Serif, ça laisse une ligne claire au milieu) puis un empilement de `text-shadow` (rendu visuel moins bon). Le contour est correct nativement dans ce fichier parce qu'il a été généré comme forme vectorielle propre (pas un effet de rendu de police), donc aucun des deux artefacts n'existe dessus.
+  Le même wordmark géant occupait auparavant le haut du footer — **retiré le 11 septembre 2026** (plus de wordmark dans le footer). Le footer garde volontairement sa hauteur pleine page (`min-height: 100vh`) et son formulaire poussé en bas (`margin-top: auto` sur `.footer__inner`) : ça laisse un vide en haut, assumé pour l'instant.
+  **Exception documentée aux jetons de couleur** : les couleurs de cet asset (`#D9D9D9` pour le contour, `#7A7A7A` pour le remplissage) sont volontairement **indépendantes de `--color-text`/`--color-neutral-light`** — les éléments utilisant ce mot-symbole contouré ne suivent pas la règle de couleur habituelle du texte.
 - Responsive continu de 320 à 1920 px : breakpoints dictés par le contenu, jamais par un appareil
 
 ## Composants

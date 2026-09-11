@@ -160,40 +160,42 @@ if (str_starts_with($view, 'admin/')) {
         if ($view === 'admin/project-form' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             checkCsrf();
             $form = projectDataFromPost();
-            // cover_image is not a text field: keep the current one unless a new
-            // upload replaces it below.
-            $form['cover_image'] = $isEdit ? ($project['cover_image'] ?? null) : null;
+            // cover_media is not a text field: keep the current one unless a new
+            // upload replaces it below. Uploading here only ever produces an
+            // image (see includes/admin/uploads.php) — a video cover is placed
+            // by hand in medias/{slug}/ and the column set directly in the DB.
+            $form['cover_media'] = $isEdit ? ($project['cover_media'] ?? null) : null;
 
             $errors = validateProject($form, $editId);
 
-            $hasUpload = ($_FILES['cover_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+            $hasUpload = ($_FILES['cover_media']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
             if ($hasUpload) {
-                $uploadError = validateUploadedImage($_FILES['cover_image']);
+                $uploadError = validateUploadedImage($_FILES['cover_media']);
                 if ($uploadError !== null) {
-                    $errors['cover_image'] = $uploadError;
+                    $errors['cover_media'] = $uploadError;
                 }
             }
 
             // Write the file only once the whole form is valid.
             if (!$errors && $hasUpload) {
                 try {
-                    $form['cover_image'] = storeUploadedImage(
-                        $_FILES['cover_image'],
+                    $form['cover_media'] = storeUploadedImage(
+                        $_FILES['cover_media'],
                         slugify($form['title'])
                     );
                 } catch (RuntimeException $e) {
-                    $errors['cover_image'] = $e->getMessage();
+                    $errors['cover_media'] = $e->getMessage();
                 }
             }
 
             if (!$errors) {
                 if ($isEdit) {
                     updateProject($editId, $form);
-                    flash('Project saved.');
+                    flash('Projet enregistré.');
                     header('Location: ' . url("admin/projects/{$editId}/edit"));
                 } else {
                     $editId = createProject($form);
-                    flash('Project created.');
+                    flash('Projet créé.');
                     header('Location: ' . url("admin/projects/{$editId}/edit"));
                 }
                 exit;
@@ -210,7 +212,7 @@ if (str_starts_with($view, 'admin/')) {
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             checkCsrf();
             deleteProject($deleteId);
-            flash('Project deleted.');
+            flash('Projet supprimé.');
             header('Location: ' . url('admin/projects'));
             exit;
         }

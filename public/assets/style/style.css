@@ -139,22 +139,29 @@ summary:active {
 /* Navbar --------------------------------------------------------------- */
 
 .navbar {
+  /* Full-bleed, like .footer — Figma's Navbar frame spans the whole page
+     width (1512px) with the padding below as its only gutter. Unlike
+     .layout__main, it's not a centered 1200px content column. */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-3);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4); /* 24px vertical / 32px horizontal (Figma) */
 }
 
 .navbar__home {
-  font-family: var(--font-serif);
-  font-size: 32px; /* Heading/H3 */
-  letter-spacing: -0.04em;
-  text-decoration: none;
-  color: inherit;
+  display: inline-block;
+}
+
+.navbar__home-image {
+  /* Same 32/25 pair as h3 (Figma: "Heading/H3 - 32" desktop, "Heading/H3
+     Mobile - 25") — reused as a height now that the wordmark is prebuilt
+     art (public/medias/title_name.svg) instead of live type; width follows
+     from the image's own aspect ratio (set via its width/height attributes). */
+  display: block;
+  height: clamp(1.5625rem, 2vw + 0.75rem, 2rem);
+  width: auto;
 }
 
 .navbar__status {
@@ -164,6 +171,15 @@ summary:active {
   font-size: 12px; /* Body/XSmall */
   letter-spacing: -0.04em;
   color: var(--color-text);
+}
+
+/* The mobile Navbar frame in Figma drops the availability status entirely —
+   not a wrap, it simply isn't part of that layout. Hidden once the row gets
+   tight for the three groups (content-driven, not a device width). */
+@media (max-width: 640px) {
+  .navbar__status {
+    display: none;
+  }
 }
 
 .navbar__status-dot {
@@ -180,16 +196,43 @@ summary:active {
 }
 
 .navbar__link {
+  position: relative; /* anchors the ::after underline below */
   color: inherit;
   text-decoration: none;
+  letter-spacing: -0.04em; /* Figma: Body/Base -16 on nav items, tracking -4% */
 }
 
-.navbar__link:hover {
-  text-decoration: underline;
+/* The underline is its own element, not text-decoration: a plain underline
+   can only be shown or hidden, but Figma animates it growing in from the
+   left on hover — that needs something transform-able. */
+.navbar__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px; /* var(--space-0-5): gap between text and line, per Figma */
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration) var(--ease);
+}
+
+.navbar__link:hover::after,
+.navbar__link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.navbar__link[aria-current="page"] {
+  font-weight: 500; /* Figma "Active" state: Body/Base Medium */
 }
 
 /* Footer -------------------------------------------------------------- */
 
+/* min-height/margin-top: auto on .footer__inner below still push the form to
+   the bottom of a full viewport-height footer, leaving empty space above it
+   now that the wordmark (removed 11 September 2026) isn't there to fill it —
+   kept as-is for now, on purpose, not an oversight. */
 .footer {
   position: relative;
   display: flex;
@@ -198,29 +241,6 @@ summary:active {
   min-height: 100vh;
   padding: var(--space-4); /* 32px all sides (Figma) */
   background-color: var(--color-bg);
-}
-
-/* The signature. Decorative text that must NOT behave like text: inert, not
-   selectable, default cursor. The "sticker" outline is a thick text-stroke
-   painted behind the fill (paint-order), the one exception to "no shadow". */
-.footer__wordmark {
-  margin: 0;
-  font-family: var(--font-serif);
-  /* No upper clamp: the signature always spans the viewport width (~95%).
-     Floor only, so it stays legible on very narrow phones. */
-  font-size: max(3rem, 18vw);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-  color: var(--color-text);
-  /* 48px stroke on a 256px glyph in Figma -> 0.1875em, so it scales with size. */
-  -webkit-text-stroke: 0.1875em var(--color-neutral-light);
-  paint-order: stroke fill;
-  cursor: default;
-  user-select: none;
-  -webkit-user-select: none;
-  pointer-events: none;
-  text-align: center;
 }
 
 /* Links left, form right; the location is taken out of the flow so it centres
@@ -364,6 +384,9 @@ summary:active {
    ========================================================================== */
 
 .admin-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   max-width: 900px;
   margin: 0 auto;
   padding: var(--space-5) var(--space-3);

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 /**
  * Site footer — identical on every page. Full viewport height (Figma).
- * The giant "Moïse Lukebanu" wordmark is the site's signature: decorative,
- * not a link. The contact form is included on every page.
+ * The contact form is included on every page.
  */
 ?>
 <footer class="footer" id="contact">
-  <p class="footer__wordmark" aria-hidden="true">Moïse Lukebanu</p>
-
   <div class="footer__inner">
     <div class="footer__links">
       <ul class="footer__buttons">

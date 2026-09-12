@@ -136,17 +136,41 @@ summary:active {
    Structural only; component visual states come later, from Figma.
    ========================================================================== */
 
+/* Local, derived values — not Figma variables themselves (so not in the
+   :root token block above, per CLAUDE.md § Interface), but computed from
+   two of Figma's frames (Mobile 393px, Web 1512px) the same way --ease and
+   --duration are already a documented exception to that rule.
+   --navbar-padding-x/-y: .navbar's own padding is --space-2 (16px) on all
+   four sides on Mobile, --space-4/--space-3 (32px/24px) on Web — shared
+   with .layout__main below, since its side margin is the same number.
+   --navbar-clearance: .navbar is fixed, so .layout__main has to pad itself
+   down by the navbar's actual rendered height to avoid sitting under it —
+   63px on Mobile, 86px on Web (both given directly by Figma's Navbar
+   component, not derived from the padding above). */
+:root {
+  --navbar-padding-x: clamp(var(--space-2), 1.4vw + 0.65rem, var(--space-4));
+  --navbar-padding-y: clamp(var(--space-2), 0.71vw + 0.82rem, var(--space-3));
+  --navbar-clearance: clamp(63px, 2.06vw + 3.43rem, 86px);
+}
+
 .layout__main {
   /* Grows to push the footer down; body is a flex column. */
   flex: 1;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-5) var(--space-3);
-  /* .navbar is now position: fixed, so it no longer pushes this element down
-     by taking up space in the flex column — top padding is bumped by one
-     more step (--space-4) to clear it instead. */
-  padding-top: calc(var(--space-5) + var(--space-4));
+  /* Full-bleed, like .navbar/.footer — not a centered column. Checked
+     against Figma on three pages (Home, About, Lab): every one keeps the
+     same side margin as the navbar, right out to the viewport edge, never
+     a boxed 1200px column with its own padding inside that. clamp()
+     interpolates between the mobile and desktop values rather than
+     jumping at a breakpoint, same approach as the type scale
+     (CLAUDE.md § Interface). */
+  padding-inline: var(--navbar-padding-x);
+  padding-bottom: var(--space-5);
+  /* .navbar is position: fixed, so it no longer pushes this element down
+     by taking up space in the flex column — top padding clears it instead.
+     Pages that need a bit more room below the navbar than this — About
+     does — add their own extra margin-top. */
+  padding-top: var(--navbar-clearance);
 }
 
 /* Navbar --------------------------------------------------------------- */
@@ -160,7 +184,7 @@ summary:active {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-3);
-  padding: var(--space-3) var(--space-4); /* 24px vertical / 32px horizontal (Figma) */
+  padding: var(--navbar-padding-y) var(--navbar-padding-x);
   /* Fixed to the viewport: stays pinned while the page scrolls underneath it.
      Same color as the page background, so it reads as an opaque bar rather
      than a floating strip once content scrolls underneath. */
@@ -192,7 +216,7 @@ summary:active {
   display: inline-flex;
   align-items: center;
   gap: var(--space-0-5);
-  font-size: 12px; /* Body/XSmall */
+  font-size: 14px; /* Body/Small */
   letter-spacing: -0.04em;
   color: var(--color-text);
 }
@@ -235,7 +259,7 @@ summary:active {
   left: 0;
   right: 0;
   bottom: -2px; /* var(--space-0-5): gap between text and line, per Figma */
-  height: 2px;
+  height: 1px;
   background-color: currentColor;
   transform: scaleX(0);
   transform-origin: left;
@@ -595,12 +619,19 @@ summary:active {
 /* Button (design-system component — Figma "Button") ---------------- */
 
 .button {
+  /* Figma's Button has a real Device=Web/Mobile variant for this component
+     (icon 24px→20px, outer gap 16px→8px) rather than the clamp() scale used
+     everywhere else — but CLAUDE.md rules out breakpoints tied to a device,
+     so it's interpolated the same way as --navbar-padding-x/-y: linearly
+     between Figma's own Mobile (393px) and Web (1512px) frame widths. */
+  --button-icon-size: clamp(20px, 0.36vw + 1.16rem, var(--space-3));
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: clamp(var(--space-1), 0.71vw + 0.32rem, var(--space-2));
   padding: var(--space-2);
   font-family: var(--font-body);
   font-size: 16px; /* Body/Base — Figma "Button" */
+  letter-spacing: -0.04em; /* -4%, part of Figma's "Body/Base - 16" text style */
   color: var(--color-text);
   background-color: var(--color-neutral-light);
   border: 0;
@@ -612,9 +643,20 @@ summary:active {
     color var(--duration) var(--ease);
 }
 
-/* External buttons carry the arrow: less right padding (Figma 16 / 10). */
+/* External buttons carry the arrow: less right padding (Figma 16 / 10 — a
+   bare value in Figma too, no token to reuse here). */
 .button--external {
   padding-right: 10px;
+}
+
+/* Groups an icon with its label so they can share a fixed 10px gap that's
+   distinct from .button's own (responsive) gap toward the external-link
+   arrow — Figma nests the same way instead of using one flat gap for
+   everything. 10px has no matching token; Figma itself uses a bare value. */
+.button__content {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .button:hover {
@@ -646,16 +688,213 @@ summary:active {
 
 .button__icon {
   flex-shrink: 0;
+  width: var(--button-icon-size);
+  height: var(--button-icon-size);
+  object-fit: contain;
 }
 
 /* External-link arrow: the Figma SVG, tinted to currentColor so it follows
-   the button's :active inversion. */
+   the button's :active inversion. Same responsive size as .button__icon —
+   Figma shrinks both together on Mobile. */
 .button__arrow {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: var(--button-icon-size);
+  height: var(--button-icon-size);
   margin-left: auto;
   background-color: currentColor;
-  -webkit-mask: url('../icons/arrow-external.svg') no-repeat center / 24px;
-  mask: url('../icons/arrow-external.svg') no-repeat center / 24px;
+  -webkit-mask: url('../icons/arrow-external.svg') no-repeat center / var(--button-icon-size);
+  mask: url('../icons/arrow-external.svg') no-repeat center / var(--button-icon-size);
+}
+
+/* ==========================================================================
+   About — bio, availability status, skill chips (Figma "About — Web/Mobile")
+   ========================================================================== */
+
+/* .layout__main is now full-bleed with the same --space-4 side margin as
+   Figma (checked against Home, About and Lab — see its own comment), so
+   .about needs no side-margin override of its own any more.
+   Vertically, About is the odd one out: .layout__main's padding-top exists
+   purely to clear the fixed .navbar (zero gap of its own — content starts
+   flush against it), but Figma's About frame leaves a further ~15px under
+   the navbar (content at y=101, navbar 86px tall) that Home and Lab don't.
+   --space-2 (16px, the closest token) makes up that difference here only.
+   Mobile-first below: one column, source order (lead, availability, chips,
+   button) matches the Figma mobile frame exactly. Desktop reflows into two
+   columns further down — grid-template-areas moves .about__availability
+   next to the lead without touching the HTML order, so a screen reader
+   still meets the bio before the side note either way. */
+.about {
+  margin-top: var(--space-2);
+  display: grid;
+  grid-template-areas:
+    "lead"
+    "availability"
+    "chips"
+    "actions";
+  gap: var(--space-3);
+}
+
+/* Below this, the desktop frame's 843px main column + 477px availability
+   column no longer both fit with room to read — a content-driven break,
+   not a device (CLAUDE.md § Interface). minmax(0, ...) stops the fr tracks
+   from overflowing on a long line, same safety net as a normal fr grid. */
+@media (min-width: 900px) {
+  .about {
+    grid-template-columns: minmax(0, 843fr) minmax(0, 477fr);
+    grid-template-areas:
+      "lead        availability"
+      "chips       availability"
+      "actions     .";
+    column-gap: var(--space-4);
+    row-gap: var(--space-3);
+    align-items: start;
+  }
+
+  /* Figma's chip row (599px) isn't full-width inside its 843px column —
+     it's 5/7 of it. Desktop-only: the mobile frame sets this row to w-full. */
+  .about__chips {
+    max-width: calc(100% * 6 / 7);
+  }
+
+  /* The one desktop-only size in the whole page — confirmed deliberate, not
+     the earlier-suspected export glitch. Figma: 40px, Inter Tight Regular
+     (the mobile frame uses 16px Medium instead — see the base rule below). */
+  .about__availability {
+    font-size: 40px;
+    font-weight: 400;
+    /* Figma sets this text to leading-none (100%) at the 40px desktop size —
+       tighter than the 120% every other body text uses, this one included
+       at its own 16px mobile size just below. Easy to miss since nothing
+       here LOOKS like a heading, but the Figma layer says otherwise. */
+    line-height: 1;
+  }
+}
+
+.about__lead {
+  grid-area: lead;
+  /* Figma's text box is 843px wide — kept as a hard cap (not a token) so the
+     giant heading never stretches into an unreadably long line on a wide
+     screen; readability is the documented exception to "no hard-coded
+     values" (CLAUDE.md § Conventions). */
+  max-width: 843px;
+}
+
+.about__availability {
+  grid-area: availability;
+  font-weight: 500; /* Inter Tight Medium — mobile size (Figma "Body/Base Medium - 16") */
+  letter-spacing: -0.04em; /* -4%, same ratio at both the 16px and 40px sizes */
+}
+
+.about__chips {
+  grid-area: chips;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.about__resume {
+  grid-area: actions;
+  /* A flex/grid item stretches to the full row width by default; the button
+     should only be as wide as its label. */
+  justify-self: start;
+}
+
+/* Chip (design-system component — Figma "Chip", Icon=True). The icon is the
+   real per-tool logo from public/assets/icons/, mapped in the About page. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  padding: var(--space-1);
+  font-size: 14px; /* Body/Small */
+  letter-spacing: -0.04em;
+  background-color: var(--color-neutral-light); /* Important=False */
+  border-radius: var(--radius-sm);
+}
+
+.chip__icon {
+  flex-shrink: 0;
+  /* The global `img { height: auto }` reset (line 63) lets each logo keep
+     its own file's aspect ratio, so a non-square source (Figma's mark is
+     520×780, PHP's is 800×420) renders taller or flatter than the square
+     ones. Forcing both dimensions to the same size the HTML width/height
+     attributes already declare, plus object-fit, keeps every chip icon in
+     an identical box regardless of the source file's proportions. */
+  width: var(--space-2);
+  height: var(--space-2);
+  object-fit: contain;
+}
+
+/* Important=True — the 4 core languages from the CV's "Compétences" list,
+   darker so they read as the headline stack rather than just another tool. */
+.chip--important {
+  background-color: var(--color-neutral);
+}
+
+/* ==========================================================================
+   Lab — project grid (Figma "Lab — Web/Mobile")
+   ========================================================================== */
+
+/* Column count is a whole number — 4.5 columns doesn't mean anything — so
+   unlike spacing or type this can't be a continuous clamp(), it has to step
+   at breakpoints. Figma gives two real points: 2 columns at 393px, 6 at
+   1512px. Only 3 steps now (2/4/6, the 3-and-5 in-between values dropped by
+   request) — 673px and 1232px are where 3 and 5 would have crossed in the
+   original 5-step version; 4 and 6 now take over those same thresholds
+   rather than waiting for their own (953px/1512px), which is why the jump
+   from 2 to 4 (and 4 to 6) happens earlier than a straight-line proportion
+   would put a single step. */
+/* A CSS grid alone can't wrap this layout correctly (see lab.php's own
+   comment for why) — PHP works out every cell's row/column for each column
+   count below and hands it over as --r2/--c2 (2 columns) through --r6/--c6
+   (6 columns) on the cell itself. Each @media block just switches which
+   pair .lab__caption/.lab__image read; grid-template-rows is left implicit
+   (auto) since PHP's packing can use however many bands a given tier needs,
+   not a fixed 2. */
+.lab {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-1);
+}
+
+@media (min-width: 673px) {
+  .lab {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1232px) {
+  .lab {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.lab__caption,
+.lab__image {
+  grid-row: var(--r2);
+  grid-column: var(--c2);
+}
+
+@media (min-width: 673px) {
+  .lab__caption,
+  .lab__image {
+    grid-row: var(--r4);
+    grid-column: var(--c4);
+  }
+}
+
+@media (min-width: 1232px) {
+  .lab__caption,
+  .lab__image {
+    grid-row: var(--r6);
+    grid-column: var(--c6);
+  }
+}
+
+/* One grid cell, exactly the column's width — height isn't set here: the
+   global img/video reset already has height: auto, so the browser derives
+   it from the file's own intrinsic ratio. */
+.lab__image {
+  width: 100%;
 }

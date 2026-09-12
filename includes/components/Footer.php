@@ -13,25 +13,31 @@ declare(strict_types=1);
       <ul class="footer__buttons">
         <li>
           <a class="button button--external" href="https://github.com/moiselkbn">
-            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
-                 alt="" width="24" height="24">
-            <span>GitHub</span>
+            <span class="button__content">
+              <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
+                   alt="" width="24" height="24">
+              <span>GitHub</span>
+            </span>
             <span class="button__arrow" aria-hidden="true"></span>
           </a>
         </li>
         <li>
           <a class="button button--external" href="https://www.linkedin.com/in/moiselukebanu/">
-            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
-                 alt="" width="24" height="24">
-            <span>LinkedIn</span>
+            <span class="button__content">
+              <img class="button__icon" src="<?= e(url('assets/icons/linkedin.svg')) ?>"
+                   alt="" width="24" height="24">
+              <span>LinkedIn</span>
+            </span>
             <span class="button__arrow" aria-hidden="true"></span>
           </a>
         </li>
         <li>
           <a class="button" href="<?= e(url('cv/moise-lukebanu-cv.pdf')) ?>" download>
-            <img class="button__icon" src="<?= e(url('assets/icons/github.png')) ?>"
-                 alt="" width="24" height="24">
-            <span>Download the resume</span>
+            <span class="button__content">
+              <img class="button__icon" src="<?= e(url('assets/icons/arrow-external.svg')) ?>"
+                   alt="" width="24" height="24" style="transform: rotate(90deg);">
+              <span>Download the resume</span>
+            </span>
           </a>
         </li>
       </ul>

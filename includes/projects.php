@@ -29,21 +29,36 @@ function getFeaturedProjects(): array
 }
 
 /**
- * All lab projects, newest first — the /lab grid.
+ * All lab projects, most recent year first — the /lab grid. Unlike the other
+ * read functions here, this one decodes its JSON columns: the view needs the
+ * actual arrays (how many images, which domains) to lay the grid out, not
+ * the raw JSON strings PDO hands back.
  *
  * @return array<int, array<string, mixed>>
  */
 function getLabProjects(): array
 {
+    // `year` is a VARCHAR ("2025" or a range "2023–2026" — CLAUDE.md § Base de
+    // données), but every value starts with 4 digits, so a plain text sort
+    // already orders by the starting year correctly; created_at only breaks
+    // a tie between two projects from the same year.
     $stmt = db()->prepare(
-        'SELECT id, slug, title, year, cover_media
+        'SELECT id, slug, title, year, cover_media, gallery, domains
          FROM project
          WHERE status = ?
-         ORDER BY created_at DESC'
+         ORDER BY year DESC, created_at DESC'
     );
     $stmt->execute(['lab']);
+    $rows = $stmt->fetchAll();
 
-    return $stmt->fetchAll();
+    // By reference so the decoded value replaces the raw JSON string in place.
+    foreach ($rows as &$row) {
+        $row['gallery'] = $row['gallery'] ? json_decode((string) $row['gallery'], true) : [];
+        $row['domains'] = $row['domains'] ? json_decode((string) $row['domains'], true) : [];
+    }
+    unset($row); // break the reference — leaving it dangling risks a subtle bug on the next foreach that reuses $row
+
+    return $rows;
 }
 
 /**

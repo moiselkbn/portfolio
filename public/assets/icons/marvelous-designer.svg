@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 6250 6250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Page-1" serif:id="Page 1" transform="matrix(4.166667,0,0,4.166667,0,0)">
+        <rect x="0" y="0" width="1500" height="1500" style="fill:none;"/>
+        <clipPath id="_clip1">
+            <rect x="0" y="0" width="1500" height="1500"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <g id="Layer-1" serif:id="Layer 1">
+                <path d="M1300.823,0C1353.648,-0 1404.31,20.985 1441.662,58.338C1479.015,95.69 1500,146.352 1500,199.177L1500,1300.823C1500,1353.648 1479.015,1404.31 1441.662,1441.662C1404.31,1479.015 1353.648,1500 1300.823,1500L199.177,1500C146.352,1500 95.69,1479.015 58.338,1441.662C20.985,1404.31 -0,1353.648 0,1300.823L0,199.177C-0,146.352 20.985,95.69 58.338,58.338C95.69,20.985 146.352,-0 199.177,0L1300.823,0ZM334.986,1171L435,1171L435,497L751,943L1066.986,495L1066.986,1171L1167,1171L1167,329L1066.986,329L753,789L440.986,329L334.986,329L334.986,1171Z"/>
+            </g>
+        </g>
+    </g>
+</svg>
